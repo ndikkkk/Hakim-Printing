@@ -66,159 +66,34 @@
 </section>
 
 {{-- PRODUCT --}}
-<section class="product section-pink" id="product">
-    <h2>Product</h2>
+{{-- Kita bagi data produk per 5 item, lalu latar belakangnya dibuat selang-seling --}}
+@foreach($products->chunk(5) as $index => $chunk)
+    <section class="product {{ $index % 2 == 0 ? 'section-pink' : 'section-cream' }}" {!! $index == 0 ? 'id="product"' : '' !!}>
+        @if($index == 0)
+            <h2>Product</h2>
+        @endif
 
-    <div class="grid">
-
-        <div class="item">
-            <a href="/product/1#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
+        <div class="grid">
+            @foreach($chunk as $item)
+                <div class="item">
+                    {{-- Link ke halaman detail membawa ID produk --}}
+                    <a href="{{ route('product.detail', ['id' => $item->id]) }}#detail">
+                        <div class="card-img">
+                            <img src="{{ asset('images/' . $item->image) }}" alt="{{ $item->name }}">
+                        </div>
+                    </a>
+                    <h3>{{ $item->name }}</h3>
+                    <p>{{ Str::limit($item->description, 40) }}</p>
+                    <p class="price">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
+                    {{-- Tombol pesan diarahkan ke form order dengan membawa ID produk --}}
+                    <a href="{{ route('order.info', ['product_id' => $item->id]) }}">
+                        <button>Pesan</button>
+                    </a>
                 </div>
-            </a>
-            <h3>Produk A</h3>
-            <p>Lorem ipsum</p>
-            <p class="price">Rp 20.000</p>
-            <a href="/order/1">
-                <button>Pesan</button>
-            </a>
+            @endforeach
         </div>
-
-        <div class="item">
-            <a href="/product/2#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
-                </div>
-            </a>
-            <h3>Produk B</h3>
-            <p>Lorem ipsum dolor sit amet</p>
-            <p class="price">Rp 20.000,00</p>
-            <a href="/order/2">
-                <button>Pesan</button>
-            </a>
-        </div>
-
-        <div class="item">
-            <a href="/product/3#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
-                </div>
-            </a>
-            <h3>Produk C</h3>
-            <p>Lorem ipsum dolor sit amet</p>
-            <p class="price">Rp 20.000,00</p>
-            <a href="/order/3">
-                <button>Pesan</button>
-            </a>
-        </div>
-
-        <div class="item">
-            <a href="/product/4#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
-                </div>
-            </a>
-            <h3>Produk D</h3>
-            <p>Lorem ipsum dolor sit amet</p>
-            <p class="price">Rp 20.000,00</p>
-            <a href="/order/4">
-                <button>Pesan</button>
-            </a>
-        </div>
-
-        <div class="item">
-            <a href="/product/5#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
-                </div>
-            </a>
-            <h3>Produk E</h3>
-            <p>Lorem ipsum dolor sit amet</p>
-            <p class="price">Rp 20.000,00</p>
-            <a href="/order/5">
-                <button>Pesan</button>
-            </a>
-        </div>
-
-    </div>
-</section>
-
-<section class="product section-cream">
-    <div class="grid">
-
-        <div class="item">
-            <a href="/product/6#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
-                </div>
-            </a>
-            <h3>Produk F</h3>
-            <p>Lorem ipsum dolor sit amet</p>
-            <p class="price">Rp 25.000,00</p>
-            <a href="/order/6">
-                <button>Pesan</button>
-            </a>
-        </div>
-
-        <div class="item">
-            <a href="/product/7#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
-                </div>
-            </a>
-            <h3>Produk F</h3>
-            <p>Lorem ipsum dolor sit amet</p>
-            <p class="price">Rp 25.000,00</p>
-            <a href="/order/7">
-                <button>Pesan</button>
-            </a>
-        </div>
-
-        <div class="item">
-            <a href="/product/8#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
-                </div>
-            </a>
-            <h3>Produk F</h3>
-            <p>Lorem ipsum dolor sit amet</p>
-            <p class="price">Rp 25.000,00</p>
-            <a href="/order/8">
-                <button>Pesan</button>
-            </a>
-        </div>
-
-        <div class="item">
-            <a href="/product/9#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
-                </div>
-            </a>
-            <h3>Produk F</h3>
-            <p>Lorem ipsum dolor sit amet</p>
-            <p class="price">Rp 25.000,00</p>
-            <a href="/order/9">
-                <button>Pesan</button>
-            </a>
-        </div>
-
-        <div class="item">
-            <a href="/product/10#detail">
-                <div class="card-img">
-                    <img src="{{ asset('images/img2.jpeg') }}">
-                </div>
-            </a>
-            <h3>Produk F</h3>
-            <p>Lorem ipsum dolor sit amet</p>
-            <p class="price">Rp 25.000,00</p>
-            <a href="/order/10">
-                <button>Pesan</button>
-            </a>
-        </div>
-
-    </div>
-</section>
+    </section>
+@endforeach
 
 {{-- CONTACT --}}
 <section class="contact section-pink" id="contact">

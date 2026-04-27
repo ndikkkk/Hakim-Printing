@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 
 // ==========================================
 // PUBLIC ROUTES (Tampilan Depan / User)
 // ==========================================
-Route::get('/', function () { return view('page.home'); })->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/detail-product', function () { return view('page.detail-product'); })->name('product.detail');
 
 // ==========================================
