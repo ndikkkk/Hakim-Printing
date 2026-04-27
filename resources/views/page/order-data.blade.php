@@ -30,50 +30,52 @@
 <div class="card-container">
     <div class="card">
 
-        <form action="/information" method="GET">
+        <form action="{{ route('order.data.process') }}" method="POST">
+    @csrf
+    <div class="form-group">
+        <label>Nama Lengkap Pemesan</label>
+        <div class="input-box">
+            <input type="text" name="customer_name" value="{{ old('customer_name', $orderData['customer_name'] ?? '') }}" required>
+        </div>
+    </div>
 
-            {{-- NAMA --}}
-            <div class="form-group">
-                <label>Nama Lengkap</label>
-                <div class="input-box">
-                    <i class="fa fa-user"></i>
-                    <input type="text" name="nama">
-                </div>
-            </div>
+    <div class="form-group">
+        <label>Email</label>
+        <div class="input-box">
+            <input type="email" name="customer_email" value="{{ old('customer_email', $orderData['customer_email'] ?? '') }}" required>
+        </div>
+    </div>
 
-            {{-- WHATSAPP --}}
-            <div class="form-group">
-                <label>No. WhatsApp</label>
-                <div class="input-box">
-                    <i class="fa fa-whatsapp"></i>
-                    <input type="text" name="whatsapp">
-                </div>
-            </div>
+    <div class="form-group">
+        <label>Nomor WhatsApp</label>
+        <div class="input-box">
+            <input type="number" name="customer_phone" value="{{ old('customer_phone', $orderData['customer_phone'] ?? '') }}" required>
+        </div>
+    </div>
 
-            {{-- ALAMAT --}}
-            <div class="form-group">
-                <label>Alamat</label>
-                <div class="input-box">
-                    <i class="fa fa-home"></i>
-                    <input type="text" name="alamat">
-                </div>
-            </div>
+    <div class="form-group">
+        <label>Jumlah Pesanan (Pcs)</label>
+        <div class="input-box">
+            <input type="number" name="quantity" value="{{ old('quantity', $orderData['quantity'] ?? '100') }}" min="1" required>
+            @error('quantity') <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span> @enderror
+        </div>
+    </div>
 
-            {{-- JUMLAH --}}
-            <div class="form-group">
-                <label>Jumlah Pesanan</label>
-                <div class="input-box">
-                    <i class="fa fa-calculator"></i>
-                    <input type="number" name="jumlah">
-                </div>
-            </div>
+    <div class="form-group">
+        <label>Alamat Lengkap Pengiriman</label>
+        <div class="input-box">
+            <textarea name="customer_address" required>{{ old('customer_address', $orderData['customer_address'] ?? '') }}</textarea>
+        </div>
+    </div>
 
-            {{-- BUTTON --}}
-            <div class="btn">
-                <button type="submit">Selanjutnya</button>
-            </div>
+    {{-- Untuk sementara Province & City pakai input text dulu sebelum kita konek RajaOngkir --}}
+    <input type="hidden" name="province_id" value="1"> {{-- Dummy --}}
+    <input type="hidden" name="city_id" value="1">     {{-- Dummy --}}
 
-        </form>
+    <div class="btn">
+        <button type="submit">Selanjutnya</button>
+    </div>
+</form>
 
     </div>
 </div>

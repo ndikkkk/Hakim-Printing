@@ -1,117 +1,157 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Information Page</title>
 
     <link rel="stylesheet" href="{{ asset('css/style-info-invitation.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
-{{-- HEADER --}}
-<div class="navbar">
-    <img src="{{ asset('images/logo.png') }}">
-    <h2>Informasi Pesanan</h2>
-</div>
-
-{{-- BACKGROUND --}}
-<div class="bg">
-    <div class="pink-top"></div>
-    <div class="white-middle"></div>
-    <div class="pink-bottom"></div>
-</div>
-
-{{-- CARD --}}
-<div class="card-container">
-    <div class="card">
-
-        <form action="/checkout" method="GET">
-
-            <div class="form-group">
-                <label>Nama Lengkap Mempelai Pria</label>
-                <div class="input-box">
-                    <input type="text" name="pria_nama">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Alamat Mempelai Pria</label>
-                <div class="input-box">
-                    <input type="text" name="pria_alamat">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Nama Orang Tua Mempelai Pria</label>
-                <div class="input-box">
-                    <input type="text" name="pria_ortu">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Nama Lengkap Mempelai Wanita</label>
-                <div class="input-box">
-                    <input type="text" name="wanita_nama">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Alamat Mempelai Wanita</label>
-                <div class="input-box">
-                    <input type="text" name="wanita_alamat">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Nama Orang Tua Mempelai Wanita</label>
-                <div class="input-box">
-                    <input type="text" name="wanita_ortu">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Tanggal Akad (Waktu Akad)</label>
-                <div class="input-box">
-                    <input type="text" name="akad_tanggal">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Lokasi Akad</label>
-                <div class="input-box">
-                    <input type="text" name="akad_lokasi">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Tanggal Resepsi (Waktu Resepsi)</label>
-                <div class="input-box">
-                    <input type="text" name="resepsi_tanggal">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Lokasi Resepsi</label>
-                <div class="input-box">
-                    <input type="text" name="resepsi_lokasi">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Quotes (Opsional)</label>
-                <div class="input-box">
-                    <input type="text" name="quotes">
-                </div>
-            </div>
-
-            <div class="btn">
-                <button type="submit">Checkout</button>
-            </div>
-
-        </form>
-
+    {{-- HEADER --}}
+    <div class="navbar">
+        <img src="{{ asset('images/logo.png') }}">
+        <h2>Informasi Pesanan</h2>
     </div>
-</div>
+
+    {{-- BACKGROUND --}}
+    <div class="bg">
+        <div class="pink-top"></div>
+        <div class="white-middle"></div>
+        <div class="pink-bottom"></div>
+    </div>
+
+    {{-- CARD --}}
+    <div class="card-container">
+        <div class="card">
+
+            <form action="{{ route('order.info.process') }}" method="POST">
+                @csrf
+                {{-- Tambahkan input hidden untuk product_id --}}
+                <input type="hidden" name="product_id" value="{{ $product->id }}">
+
+                <div class="form-group">
+                    <label>Nama Lengkap Mempelai Pria</label>
+                    <div class="input-box">
+                        <input type="text" name="groom_name"
+                            value="{{ old('groom_name', $invitationData['groom_name'] ?? '') }}" required>
+                        @error('groom_name')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Ayah Mempelai Pria</label>
+                    <div class="input-box">
+                        <input type="text" name="groom_father"
+                            value="{{ old('groom_father', $invitationData['groom_father'] ?? '') }}" required>
+                        @error('groom_father')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Ibu Mempelai Pria</label>
+                    <div class="input-box">
+                        <input type="text" name="groom_mother"
+                            value="{{ old('groom_mother', $invitationData['groom_mother'] ?? '') }}" required>
+                        @error('groom_mother')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Lengkap Mempelai Wanita</label>
+                    <div class="input-box">
+                        <input type="text" name="bride_name"
+                            value="{{ old('bride_name', $invitationData['bride_name'] ?? '') }}" required>
+                        @error('bride_name')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Ayah Mempelai Wanita</label>
+                    <div class="input-box">
+                        <input type="text" name="bride_father"
+                            value="{{ old('bride_father', $invitationData['bride_father'] ?? '') }}" required>
+                        @error('bride_father')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Ibu Mempelai Wanita</label>
+                    <div class="input-box">
+                        <input type="text" name="bride_mother"
+                            value="{{ old('bride_mother', $invitationData['bride_mother'] ?? '') }}" required>
+                        @error('bride_mother')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tanggal Acara (Akad/Resepsi)</label>
+                    <div class="input-box">
+                        <input type="date" name="event_date"
+                            value="{{ old('event_date', $invitationData['event_date'] ?? '') }}" required>
+                        @error('event_date')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Waktu Acara (Contoh: 08.00 - Selesai)</label>
+                    <div class="input-box">
+                        <input type="text" name="event_time"
+                            value="{{ old('event_time', $invitationData['event_time'] ?? '') }}" required>
+                        @error('event_time')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Link Google Maps Lokasi</label>
+                    <div class="input-box">
+                        <input type="url" name="location_maps"
+                            value="{{ old('location_maps', $invitationData['location_maps'] ?? '') }}"
+                            placeholder="https://maps.app.goo.gl/..." required>
+                        @error('location_maps')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Quotes (Opsional)</label>
+                    <div class="input-box">
+                        <input type="text" name="quotes"
+                            value="{{ old('quotes', $invitationData['quotes'] ?? '') }}">
+                        @error('quotes')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="btn">
+                    <button type="submit">Lanjut ke Data Pemesan</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
 
 </body>
+
 </html>

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
 
 // ==========================================
 // PUBLIC ROUTES (Tampilan Depan / User)
@@ -13,8 +14,10 @@ Route::get('/detail-product', function () { return view('page.detail-product'); 
 // ORDER FLOW ROUTES (Alur Pemesanan)
 // ==========================================
 Route::prefix('order')->name('order.')->group(function () {
-    Route::get('/info-invitation', function () { return view('page.info-invitation'); })->name('info');
-    Route::get('/data', function () { return view('page.order-data'); })->name('data');
+    Route::get('/info-invitation', [OrderController::class, 'showInfoForm'])->name('info');
+    Route::post('/info-invitation', [OrderController::class, 'processInfoForm'])->name('info.process');
+    Route::get('/data', [OrderController::class, 'showDataForm'])->name('data');
+    Route::post('/data', [OrderController::class, 'processDataForm'])->name('data.process');
     Route::get('/shipping', function () { return view('page.shipping'); })->name('shipping');
     Route::get('/checkout', function () { return view('page.checkout'); })->name('checkout');
     Route::get('/confirm', function () { return view('page.confirm'); })->name('confirm');
@@ -26,7 +29,7 @@ Route::prefix('order')->name('order.')->group(function () {
 // ==========================================
 Route::get('/signin', function () { return view('page.signin'); })->name('signin');
 Route::get('/signup', function () { return view('page.signup'); })->name('signup');
-Route::get('/user', function () { return view('page.user-page'); })->name('user.page');
+Route::get('/user', function () { return view('page.user-page'); })->name('page.user-page');
 Route::get('/history', function () { return view('page.history'); })->name('user.history');
 
 // ==========================================
