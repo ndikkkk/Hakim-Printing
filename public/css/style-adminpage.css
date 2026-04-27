@@ -1,0 +1,115 @@
+body {
+    margin: 0;
+    font-family: Poppins, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    height: 70px;
+    background: white;
+    box-sizing: border-box;
+}
+
+.navbar h2 {
+    margin: 0;
+    font-size: 20px;
+    flex: 1;
+    text-align: center;
+}
+
+.logo {
+    height: 40px;
+}
+
+.greeting {
+    background: #e5c1c1;
+    padding: 30px;
+}
+
+.greeting h3 {
+    margin: 0;
+}
+
+.user-section {
+    background: white;
+    padding: 20px;
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.menu-item {
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.menu-item img {
+    width: 45px;
+    height: 45px;
+}
+
+.menu-item p {
+    margin-top: 10px;
+}
+
+.logout-link {
+    background: none;
+    border: none;
+    margin-right: 5px;
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.logout-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.contact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    gap: 40px;
+}
+
+.map {
+    display: flex;
+    justify-content: center;
+}
+
+.contact div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.contact-item .icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}

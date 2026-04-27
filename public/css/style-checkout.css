@@ -1,0 +1,175 @@
+body {
+    margin: 0;
+    font-family: Poppins, sans-serif;
+        background-color: #FDF8F0;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background-color: #FDF8F0;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+border-bottom: 1px solid rgba(0,0,0,0.08);
+    position: relative;
+    z-index: 10;
+}
+
+.header h2 {
+    margin: 0;
+}
+
+.content {
+    padding-bottom: 100px;
+}
+
+.alamat,
+.informasi,
+.catatan {
+    background-color: #FDF8F0;
+    padding: 30px;
+}
+
+.alamat p {
+    margin: 0;
+    font-size: 13px;
+    color: black;
+}
+
+.section-pink,
+.pengiriman,
+.payment {
+    background: #EBD1A0;
+      padding: 30px;
+}
+
+.produk-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.produk-img img {
+    width: 90px;
+    height: 90px;
+    border-radius: 5px;
+    object-fit: cover;
+    margin-left: 13px;
+}
+
+.produk-detail {
+    margin-left: 25px;
+}
+
+.produk-detail h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.harga {
+    margin: 5px 0;
+    color: #3a2c17;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.jumlah {
+    margin: 0;
+    font-size: 12px;
+    color: #555;
+}
+
+.payment select {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    background-color: #FDF8F0;
+      padding: 10px;
+}
+
+.checkout-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #FDF8F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-top: 1px solid #ddd;
+}
+
+.total p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.total span {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.checkout-bar button {
+    background: #d6ae62;
+    color: #3a2c17;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-right: 40px;
+}
+
+.checkout-bar button:hover {
+    background: #bb9a5c;
+}
+
+.info-item,
+.catatan-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.pengiriman-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 15px 0;
+}
+
+.info-item span:last-child,
+.catatan-item span:last-child {
+    color: #999;
+}
+
+.catatan-item:last-child span:last-child {
+    font-weight: bold;
+    color: #333;
+}
+
+.kurir {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: #333;
+}
+
+.title-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+.title-icon img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}

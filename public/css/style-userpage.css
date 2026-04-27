@@ -1,0 +1,153 @@
+body {
+    margin: 0;
+    font-family: Poppins, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    height: 70px;
+    background-color: #FDF8F0;
+    box-sizing: border-box;
+}
+
+.navbar h2 {
+    margin: 0;
+    font-size: 20px;
+    flex: 1;
+    text-align: center;
+}
+
+.greeting {
+background: #EBD1A0;
+    padding: 30px;
+}
+
+.greeting h3 {
+    margin: 0;
+}
+
+.user-section {
+    background-color: #FDF8F0;
+    padding: 20px;
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.menu-item {
+    text-align: center;
+    cursor: pointer;
+        text-decoration: none;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.menu-item img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    display: block;
+}
+
+.menu-shipping img,
+.menu-finished img{
+    width: 45px;
+    height: 37px;
+}
+
+.menu-catalog img{
+    width: 43px;
+    height: 38px;
+}
+
+.menu-shipping,
+.menu-finished,
+.menu-catalog {
+     text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+
+.menu-item p {
+    margin-top: 10px;
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+    color: #8b2e2e;
+}
+
+.logout-link {
+    background: none;
+    border: none;
+    margin-right: 5px;
+
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+
+    text-decoration: none;
+}
+
+.logout-icon {
+    width: 18px;
+    height: 18px;
+    transform: translateY(3px);
+    margin-left: 5px;
+}
+
+.contact {
+     display: flex;
+    align-items: center;
+    padding: 40px;
+    gap: 20px;
+background: #EBD1A0;
+}
+
+.map {
+    display: flex;
+    justify-content: center;
+    margin-left: 1500px;
+}
+
+.contact h2 {
+    margin-left: 1px;
+    font-size: 25px;
+    margin-top: 0;
+}
+
+.contact div {
+    margin-left: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.contact-item .icon {
+    width: 15px;
+    height: 15px;
+    object-fit: contain;
+}
+
+.contact-item span {
+    line-height: 1.4;
+}
