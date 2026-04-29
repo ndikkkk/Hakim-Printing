@@ -15,7 +15,7 @@
 
     <div class="content">
 
-        <form action="{{ route('order.confirm') }}" method="POST" id="checkoutForm">
+        <form action="{{ route('order.checkout.process') }}" method="POST" id="checkoutForm">
             @csrf
 
             {{-- 1. ALAMAT PEMESAN --}}
@@ -128,7 +128,7 @@
                 </div>
             </div>
 
-            {{-- 6. METODE PEMBAYARAN --}}
+            {{-- 6. METODE PEMBAYARAN
             <div class="payment">
                 <h4 class="title-icon">
                     <img src="{{ asset('images/payment.png') }}">
@@ -144,6 +144,7 @@
                     <option value="MANDIRI">Mandiri - 1122334455</option>
                 </select>
             </div>
+            --}}
 
             {{-- 7. CHECKOUT BAR (TOTAL AKHIR) --}}
             <div class="checkout-bar">
@@ -205,8 +206,91 @@
             // Update input hidden untuk dikirim saat checkout
             inputGrandTotal.value = grandTotal;
         });
+        // === SCRIPT AJAX UNTUK CHECKOUT TANPA RELOAD ===
+        const formCheckout = document.getElementById('checkoutForm');
+
+        formCheckout.addEventListener('submit', function(e) {
+            e.preventDefault(); // Mencegah halaman me-reload
+
+            // Ambil semua data dari form
+            const formData = new FormData(this);
+
+            // Ambil tombol submit untuk diubah jadi status loading
+            const btnSubmit = this.querySelector('button[type="submit"]');
+            const originalText = btnSubmit.innerText;
+            btnSubmit.innerText = "Memproses...";
+            btnSubmit.disabled = true;
+
+            // Kirim data ke backend secara diam-diam
+            fetch("{{ route('order.checkout.process') }}", { // Sesuaikan nama rute mas
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Kembalikan tombol ke keadaan semula
+                    btnSubmit.innerText = originalText;
+                    btnSubmit.disabled = false;
+
+                    // Jika berhasil mendapat token, panggil pop-up Midtrans!
+                    if (data.snap_token) {
+                        window.snap.pay(data.snap_token, {
+                            onSuccess: function(result) {
+                                // Kalau berhasil bayar, arahkan ke halaman Terima Kasih
+                                window.location.href = "{{ route('order.confirm') }}";
+                            },
+                            onPending: function(result) {
+                                alert("Menunggu pembayaran Anda!");
+                            },
+                            onError: function(result) {
+                                alert("Pembayaran gagal!");
+                            },
+                            onClose: function() {
+                                // Jika popup ditutup sebelum dibayar, halaman tetap aman!
+                                alert(
+                                    'Anda membatalkan pembayaran. Silakan klik Checkout kembali jika ingin melanjutkan.');
+                            }
+                        });
+                    } else {
+                        alert('Gagal mendapatkan token pembayaran.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    btnSubmit.innerText = originalText;
+                    btnSubmit.disabled = false;
+                    alert('Terjadi kesalahan pada sistem.');
+                });
+        });
     </script>
 
+    {{-- TAMBAHKAN KODE INI TEPAT DI ATAS </body>
+    @if (isset($snapToken))
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}">
+        </script>
+        <script>
+            // Begitu halaman termuat, langsung tembak pop-up Midtrans
+            window.snap.pay('{{ $snapToken }}', {
+                onSuccess: function(result) {
+                    // Kalau berhasil dibayar, baru dilempar ke halaman Terima Kasih punya mas
+                    window.location.href = "{{ route('order.confirm') }}";
+                },
+                onPending: function(result) {
+                    alert("Menunggu pembayaran Anda!");
+                },
+                onError: function(result) {
+                    alert("Pembayaran gagal!");
+                }
+            });
+        </script>
+    @endif
+    --}}
+
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}">
+    </script>
 </body>
 
 </html>

@@ -6,6 +6,10 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Http; // Untuk panggilan API eksternal (RajaOngkir)
+use Midtrans\Config;
+use Midtrans\Snap;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -152,5 +156,52 @@ class OrderController extends Controller
         $costs = $response['data'] ?? [];
 
         return view('page.checkout', compact('invitation', 'customer', 'costs', 'weight'));
+    }
+
+    public function processCheckout(Request $request)
+    {
+        $invitation = Session::get('invitation_data');
+        $customer = Session::get('order_customer_data');
+        $product = Session::get('selected_product');
+
+        if (!$invitation || !$customer || !$product) {
+            return redirect()->route('home')->with('error', 'Data tidak lengkap.');
+        }
+
+        // 1. Simpan Pesanan (KINI SUDAH DISESUAIKAN DENGAN MIGRATION MAS)
+        $order = \App\Models\Order::create([
+            'order_number'   => 'INV-' . strtoupper(uniqid()),
+            'user_id'        => \Illuminate\Support\Facades\Auth::id(), // Mengambil ID user yang login
+            'product_id'     => $product['id'],
+            'quantity'       => $customer['quantity'],
+            'total_weight'   => $customer['quantity'] * 15,
+            'shipping_cost'  => $request->shipping_cost, // Dari form pilihan kurir
+            'total_price'    => $request->grand_total,   // Dari input hidden grand_total
+            'payment_status' => 'pending',
+        ]);
+
+        // 2. Setting Midtrans
+        \Midtrans\Config::$serverKey = config('app.midtrans.server_key', env('MIDTRANS_SERVER_KEY'));
+        \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $order->order_number,
+                'gross_amount' => $order->total_price,
+            ],
+            'customer_details' => [
+                'first_name' => $customer['customer_name'],
+                'email' => \Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::user()->email : 'guest@example.com',
+                'phone' => $customer['customer_phone'],
+            ],
+        ];
+
+        // 3. Ambil Token Midtrans
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $order->update(['snap_token' => $snapToken]);
+
+        return response()->json(['snap_token' => $snapToken]);
     }
 }

@@ -151,3 +151,12 @@ background: #EBD1A0;
 .contact-item span {
     line-height: 1.4;
 }
+
+.logo {
+    width: 90px; /* Atur lebar sesuai kebutuhan */
+    height: auto; /* Biar proporsinya ga gepeng */
+
+    /* Tambahan opsional biar rapi posisinya di header */
+    display: block;
+    object-fit: contain; /* Memastikan gambar tidak terpotong */
+}

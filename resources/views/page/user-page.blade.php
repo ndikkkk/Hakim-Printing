@@ -14,7 +14,7 @@
     <img src="{{ asset('images/logo.png') }}" class="logo">
 
     <h2>Halaman Pengguna</h2>
-<form action="{{ route('logoutconfirm') }}" method="POST">
+<form action="{{ route('logoutuserpage') }}" method="POST">
     @csrf
     <button type="submit" class="logout-link">
         <img src="{{ asset('images/logout.png') }}" class="logout-icon">

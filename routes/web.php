@@ -40,6 +40,10 @@ Route::middleware('auth')->prefix('order')->name('order.')->group(function () {
 
     Route::get('/shipping', function () { return view('page.shipping'); })->name('shipping');
     Route::get('/checkout', [OrderController::class, 'showCheckoutForm'])->name('checkout');
+
+    // INI BARIS BARU UNTUK MEMPROSES TOMBOL CHECKOUT
+    Route::post('/checkout', [OrderController::class, 'processCheckout'])->name('checkout.process');
+
     Route::get('/confirm', function () { return view('page.confirm'); })->name('confirm');
     Route::get('/processed', function () { return view('page.processed'); })->name('processed');
 
