@@ -99,7 +99,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Tanggal Acara (Akad/Resepsi)</label>
+                    <label>Tanggal Acara (Resepsi)</label>
                     <div class="input-box">
                         <input type="date" name="event_date"
                             value="{{ old('event_date', $invitationData['event_date'] ?? '') }}" required>

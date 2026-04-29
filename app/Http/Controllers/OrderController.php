@@ -88,7 +88,7 @@ class OrderController extends Controller
         // Simpan ke session
         Session::put('order_customer_data', $validated);
 
-        return redirect()->route('order.shipping');
+        return redirect()->route('order.checkout');
     }
 
     // Tambahkan method baru ini untuk merespons AJAX pilihan kota:
@@ -108,5 +108,38 @@ class OrderController extends Controller
 
         // JANGAN DI-FILTER! Lempar SEMUA isi respons Komerce ke frontend
         return response()->json($response->json());
+    }
+
+    public function showCheckoutForm()
+    {
+        $invitation = Session::get('invitation_data');
+        $customer = Session::get('order_customer_data');
+
+        // Cegah user yang iseng langsung ngetik URL /checkout tanpa isi form
+        if (!$invitation || !$customer) {
+            return redirect()->route('home')->with('error', 'Silakan isi data pesanan terlebih dahulu.');
+        }
+
+        // Asumsi berat 1 buah undangan = 15 gram
+        $weight = $customer['quantity'] * 15;
+
+        // ID Kota asal pengiriman (Sleman = 419)
+        $originCityId = 419;
+
+        // Tembak API Komerce untuk hitung ongkir (Kita gunakan kurir JNE sebagai default)
+        $response = Http::withoutVerifying()
+            ->withHeaders(['key' => env('RAJAONGKIR_API_KEY')])
+            ->asForm()
+            ->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
+                'origin' => $originCityId,
+                'destination' => $customer['city_id'],
+                'weight' => $weight,
+                'courier' => 'jne'
+            ]);
+
+        // Ambil daftar layanan ongkir dari response
+        $costs = $response['data'] ?? [];
+
+        return view('page.checkout', compact('invitation', 'customer', 'costs', 'weight'));
     }
 }

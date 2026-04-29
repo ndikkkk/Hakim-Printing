@@ -39,7 +39,7 @@ Route::middleware('auth')->prefix('order')->name('order.')->group(function () {
     Route::post('/data', [OrderController::class, 'processDataForm'])->name('data.process');
 
     Route::get('/shipping', function () { return view('page.shipping'); })->name('shipping');
-    Route::get('/checkout', function () { return view('page.checkout'); })->name('checkout');
+    Route::get('/checkout', [OrderController::class, 'showCheckoutForm'])->name('checkout');
     Route::get('/confirm', function () { return view('page.confirm'); })->name('confirm');
     Route::get('/processed', function () { return view('page.processed'); })->name('processed');
 
