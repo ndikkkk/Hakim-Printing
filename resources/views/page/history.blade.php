@@ -14,7 +14,7 @@
 
     <h2>Pesanan Selesai</h2>
 
-    <a href="{{ route('page.user-page') }}" class="back">Back</a>
+    <a href="{{ route('page.user') }}" class="back">Back</a>
 </div>
 
 {{-- LIST PESANAN --}}

@@ -28,7 +28,7 @@
         <p>Pesanan Anda telah diterima!</p>
         <p>Dan akan segera diproses sesuai antrian :)</p>
 
-        <a href="{{ route('page.user-page') }}" class="link">
+        <a href="{{ route('page.user') }}" class="link">
             Cek status pesanan Anda di sini
         </a>
     </div>
