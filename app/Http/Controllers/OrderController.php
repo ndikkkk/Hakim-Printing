@@ -11,22 +11,30 @@ class OrderController extends Controller
 {
     // Menampilkan Form Info Invitation
     public function showInfoForm(Request $request)
-    {
-        // Tangkap product_id dari URL
-        $productId = $request->query('product_id');
+{
+    // 1. Tangkap product_id dari URL (?product_id=X)
+    $productId = $request->query('product_id');
 
-        // Jika tidak ada product_id, kembalikan ke home
-        if (!$productId) {
-            return redirect()->route('home')->with('error', 'Silakan pilih produk terlebih dahulu.');
-        }
-
-        $product = Product::findOrFail($productId);
-
-        // Cek jika sudah ada data di session
-        $invitationData = Session::get('invitation_data', []);
-
-        return view('page.info-invitation', compact('product', 'invitationData'));
+    if (!$productId) {
+        return redirect()->route('home')->with('error', 'Silakan pilih produk terlebih dahulu.');
     }
+
+    // 2. Cari produknya
+    $product = Product::findOrFail($productId);
+
+    // 3. SIMPAN KE SESSION (Penting agar Checkout bisa panggil data ini)
+    Session::put('selected_product', [
+        'id'    => $product->id,
+        'name'  => $product->name,
+        'price' => $product->price,
+        'image' => $product->image // Pastikan field di DB namanya 'image'
+    ]);
+
+    // 4. Ambil data lama jika user klik 'back' biar form tidak kosong
+    $invitationData = Session::get('invitation_data', []);
+
+    return view('page.info-invitation', compact('product', 'invitationData'));
+}
 
     // Memproses dan Memvalidasi Form Info Invitation
     public function processInfoForm(Request $request)
@@ -40,6 +48,9 @@ class OrderController extends Controller
             'bride_name' => 'required|string|max:255',
             'bride_father' => 'required|string|max:255',
             'bride_mother' => 'required|string|max:255',
+            'akad_date' => 'required|date',
+            'akad_time' => 'required|string',
+            'akad_location' => 'required|url', // Memastikan format link URL
             'event_date' => 'required|date',
             'event_time' => 'required|string',
             'location_maps' => 'required|url', // Memastikan format link URL

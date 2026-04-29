@@ -32,6 +32,10 @@
                 {{-- Tambahkan input hidden untuk product_id --}}
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
 
+                <h3>{{ $product->name }}</h3>
+                <img src="{{ asset('images/' . $product->image) }}" alt="{{ $product->name }}" width="100">
+                <p class="harga">Harga: Rp {{ number_format($product->price, 0, ',', '.') }} per lembar</p>
+
                 <div class="form-group">
                     <label>Nama Lengkap Mempelai Pria</label>
                     <div class="input-box">
@@ -99,6 +103,40 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Tanggal Acara (Akad)</label>
+                    <div class="input-box">
+                        <input type="date" name="akad_date"
+                            value="{{ old('akad_date', $invitationData['akad_date'] ?? '') }}" required>
+                        @error('akad_date')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Waktu Acara Akad (Contoh: 08.00 - Selesai)</label>
+                    <div class="input-box">
+                        <input type="text" name="akad_time"
+                            value="{{ old('akad_time', $invitationData['akad_time'] ?? '') }}" required>
+                        @error('akad_time')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Link Google Maps Lokasi</label>
+                    <div class="input-box">
+                        <input type="url" name="akad_location"
+                            value="{{ old('akad_location', $invitationData['akad_location'] ?? '') }}"
+                            placeholder="https://maps.app.goo.gl/..." required>
+                        @error('akad_location')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label>Tanggal Acara (Resepsi)</label>
                     <div class="input-box">
                         <input type="date" name="event_date"
@@ -110,7 +148,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Waktu Acara (Contoh: 08.00 - Selesai)</label>
+                    <label>Waktu Acara Resepsi (Contoh: 08.00 - Selesai)</label>
                     <div class="input-box">
                         <input type="text" name="event_time"
                             value="{{ old('event_time', $invitationData['event_time'] ?? '') }}" required>
