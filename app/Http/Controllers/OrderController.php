@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Http; // Untuk panggilan API eksternal (RajaOngkir)
 
 class OrderController extends Controller
 {
@@ -57,11 +58,18 @@ class OrderController extends Controller
     {
         // Pastikan user sudah isi data undangan dulu, kalau belum balikkan ke form awal
         if (!Session::has('invitation_data')) {
-            return redirect()->route('order.info')->with('error', 'Isi data undangan dulu ya, mas.');
+            return redirect()->route('order.info')->with('error', 'Isi data undangan dulu ya.');
         }
 
         $orderData = Session::get('order_customer_data', []);
-        return view('page.order-data', compact('orderData'));
+        // Tembak API RajaOngkir untuk ambil semua Provinsi
+        $response = Http::withoutVerifying()
+                        ->withHeaders(['key' => env('RAJAONGKIR_API_KEY')])
+                        ->get('https://rajaongkir.komerce.id/api/v1/destination/province');
+
+        $provinces = $response['data'] ?? [];
+
+        return view('page.order-data', compact('orderData', 'provinces'));
     }
 
     // Memproses Data Pemesan
@@ -81,5 +89,24 @@ class OrderController extends Controller
         Session::put('order_customer_data', $validated);
 
         return redirect()->route('order.shipping');
+    }
+
+    // Tambahkan method baru ini untuk merespons AJAX pilihan kota:
+    public function getCities($province_id)
+    {
+        // Kita tembak menggunakan garis miring sesuai standar API Komerce
+        $response = Http::withoutVerifying()
+                        ->withHeaders(['key' => env('RAJAONGKIR_API_KEY')])
+                        ->get('https://rajaongkir.komerce.id/api/v1/destination/city/' . $province_id);
+
+        // Jaga-jaga kalau Komerce nge-blank (bukan JSON)
+        if (!$response->json()) {
+            return response()->json([
+                'meta' => ['status' => 'error', 'message' => 'Format URL Komerce salah. Status: ' . $response->status()]
+            ]);
+        }
+
+        // JANGAN DI-FILTER! Lempar SEMUA isi respons Komerce ke frontend
+        return response()->json($response->json());
     }
 }

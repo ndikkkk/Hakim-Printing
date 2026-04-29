@@ -42,6 +42,8 @@ Route::middleware('auth')->prefix('order')->name('order.')->group(function () {
     Route::get('/checkout', function () { return view('page.checkout'); })->name('checkout');
     Route::get('/confirm', function () { return view('page.confirm'); })->name('confirm');
     Route::get('/processed', function () { return view('page.processed'); })->name('processed');
+
+    Route::get('/get-cities/{province_id}', [OrderController::class, 'getCities'])->name('get.cities');
 });
 
 // ==========================================
