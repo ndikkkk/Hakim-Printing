@@ -50,6 +50,8 @@ Route::middleware('auth')->prefix('order')->name('order.')->group(function () {
     Route::get('/get-cities/{province_id}', [OrderController::class, 'getCities'])->name('get.cities');
 });
 
+Route::post('/midtrans/callback', [OrderController::class, 'callback']);
+
 // ==========================================
 // USER DASHBOARD & ADMIN ROUTES
 // ==========================================

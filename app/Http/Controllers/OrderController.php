@@ -204,4 +204,31 @@ class OrderController extends Controller
 
         return response()->json(['snap_token' => $snapToken]);
     }
+
+    public function callback(Request $request)
+{
+    $serverKey = env('MIDTRANS_SERVER_KEY');
+
+    // 1. Verifikasi keamanan (Signature Key) dari Midtrans
+    $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+
+    if ($hashed == $request->signature_key) {
+        // 2. Cari order berdasarkan order_number (bukan ID biasa)
+        $order = \App\Models\Order::where('order_number', $request->order_id)->first();
+
+        if ($order) {
+            // 3. Cek status transaksi dari Midtrans dan update database
+            if ($request->transaction_status == 'capture' || $request->transaction_status == 'settlement') {
+                $order->update(['payment_status' => 'success']);
+            } elseif (in_array($request->transaction_status, ['cancel', 'deny', 'expire'])) {
+                $order->update(['payment_status' => 'failed']);
+            } elseif ($request->transaction_status == 'pending') {
+                $order->update(['payment_status' => 'pending']);
+            }
+        }
+    }
+
+    // 4. Balas Midtrans dengan response 200 OK agar mereka tahu data sudah kita terima
+    return response()->json(['message' => 'Callback diproses']);
+}
 }
