@@ -181,8 +181,8 @@ class OrderController extends Controller
         ]);
 
         // 2. Setting Midtrans
-        \Midtrans\Config::$serverKey = config('app.midtrans.server_key', env('MIDTRANS_SERVER_KEY'));
-        \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+        \Midtrans\Config::$serverKey = config('services.midtrans.server_key');
+        \Midtrans\Config::$isProduction = config('services.midtrans.is_production');
         \Midtrans\Config::$isSanitized = true;
         \Midtrans\Config::$is3ds = true;
 
@@ -207,7 +207,7 @@ class OrderController extends Controller
 
     public function callback(Request $request)
 {
-    $serverKey = env('MIDTRANS_SERVER_KEY');
+    $serverKey = config('services.midtrans.server_key');
 
     // 1. Verifikasi keamanan (Signature Key) dari Midtrans
     $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
@@ -230,5 +230,34 @@ class OrderController extends Controller
 
     // 4. Balas Midtrans dengan response 200 OK agar mereka tahu data sudah kita terima
     return response()->json(['message' => 'Callback diproses']);
+}
+// Menyimpan nomor resi yang diinput admin
+    public function inputResi(Request $request, $id)
+    {
+        $request->validate([
+            'resi' => 'required|string|max:255'
+        ]);
+
+        $order = \App\Models\Order::findOrFail($id);
+
+        // Simpan resi ke database
+        // Pastikan di tabel 'orders' mas sudah ada kolom 'resi' ya! (Tipe VARCHAR/String)
+        $order->update([
+            'resi' => $request->resi,
+            'payment_status' => 'success' // Pastikan statusnya sudah success sebelum input resi
+        ]);
+
+        return redirect()->back()->with('success', 'Nomor resi berhasil disimpan. Pesanan akan segera dikirim.');
+    }
+
+    public function confirmReceived($id)
+{
+    $order = \App\Models\Order::where('id', $id)
+                ->where('user_id', \Illuminate\Support\Facades\Auth::id())
+                ->firstOrFail();
+
+    $order->update(['is_received' => true]);
+
+    return redirect()->route('user.history')->with('success', 'Pesanan dikonfirmasi sudah diterima!');
 }
 }

@@ -55,14 +55,73 @@ Route::post('/midtrans/callback', [OrderController::class, 'callback']);
 // ==========================================
 // USER DASHBOARD & ADMIN ROUTES
 // ==========================================
-// (Biarkan rute admin dan user page seperti sebelumnya, nanti kita rapikan lebih lanjut)
-Route::get('/user', function () { return view('page.user-page'); })->name('page.user-page');
-Route::get('/history', function () { return view('page.history'); })->name('user.history');
 
-Route::prefix('admin')->name('admin.')->group(function () {
+// Halaman utama user (wajib login)
+Route::get('/user', function () {
+    return view('page.user-page');
+})->middleware('auth')->name('page.user');
+
+// Diproses: lunas, belum ada resi
+Route::get('/diproses', function () {
+    $orders = \App\Models\Order::where('user_id', \Illuminate\Support\Facades\Auth::id())
+                ->where('payment_status', 'success', 'pending')
+                ->whereNull('resi')
+                ->orderBy('created_at', 'desc')
+                ->get();
+    return view('page.processed', compact('orders'));
+})->middleware('auth')->name('user.processed');
+
+// Dikirim: sudah ada resi, belum dikonfirmasi terima
+Route::get('/dikirim', function () {
+    $orders = \App\Models\Order::where('user_id', \Illuminate\Support\Facades\Auth::id())
+                ->where('payment_status', 'success')
+                ->whereNotNull('resi')
+                ->where('is_received', false)
+                ->orderBy('created_at', 'desc')
+                ->get();
+    return view('page.shipping', compact('orders'));
+})->middleware('auth')->name('user.shipping');
+
+// Selesai: sudah dikonfirmasi diterima oleh user
+Route::get('/selesai', function () {
+    $orders = \App\Models\Order::where('user_id', \Illuminate\Support\Facades\Auth::id())
+                ->where('is_received', true)
+                ->orderBy('created_at', 'desc')
+                ->get();
+    return view('page.history', compact('orders'));
+})->middleware('auth')->name('user.history');
+
+// Route konfirmasi terima
+Route::post('/order/{id}/terima', [\App\Http\Controllers\OrderController::class, 'confirmReceived'])
+    ->middleware('auth')
+    ->name('user.confirm-received');
+
+// --- ADMIN ROUTES (tambah middleware auth) ---
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', function () { return view('admin.admin-page'); })->name('dashboard');
     Route::get('/add-product', function () { return view('admin.add-product'); })->name('product.add');
-    Route::get('/shipping', function () { return view('admin.shipping-admin'); })->name('shipping');
-    Route::get('/history', function () { return view('admin.admin-history'); })->name('history');
-    Route::get('/order-processed', function () { return view('admin.order-processed'); })->name('order.processed');
+
+    Route::get('/order-processed', function () {
+        $orders = \App\Models\Order::whereNull('resi')
+                    ->where(function($query) {
+                        $query->where('payment_status', 'success')
+                              ->orWhere('payment_status', 'pending');
+                    })
+                    ->orderBy('created_at', 'desc')->get();
+        return view('admin.order-processed', compact('orders'));
+    })->name('order.processed');
+
+    Route::post('/order/{id}/resi', [OrderController::class, 'inputResi'])->name('order.resi');
+
+    Route::get('/shipping', function () {
+        $orders = \App\Models\Order::where('payment_status', 'success')
+                    ->whereNotNull('resi')
+                    ->orderBy('created_at', 'desc')->get();
+        return view('admin.shipping-admin', compact('orders'));
+    })->name('shipping');
+
+    Route::get('/history', function () {
+        $orders = \App\Models\Order::orderBy('created_at', 'desc')->get();
+        return view('admin.admin-history', compact('orders'));
+    })->name('history');
 });

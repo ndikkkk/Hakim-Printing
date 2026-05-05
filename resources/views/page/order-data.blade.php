@@ -9,7 +9,8 @@
 <body>
 
 <div class="navbar">
-    <img src="{{ asset('images/logo.png') }}">
+    {{-- hapus sementara --}}
+    {{-- <img src="{{ asset('images/logo.png') }}"> --}}
     <h2>Data Pesanan</h2>
 </div>
 

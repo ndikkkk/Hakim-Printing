@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel="stylesheet" href="{{ asset('css/style-userpage.css') }}">
     <title>Halaman Pengguna</title>
 </head>
@@ -12,48 +11,55 @@
 {{-- NAVBAR --}}
 <nav class="navbar">
     <img src="{{ asset('images/logo.png') }}" class="logo">
-
     <h2>Halaman Pengguna</h2>
-<form action="{{ route('logoutuserpage') }}" method="POST">
-    @csrf
-    <button type="submit" class="logout-link">
-        <img src="{{ asset('images/logout.png') }}" class="logout-icon">
-        Sign Out
-    </button>
-</form>
+
+    {{-- Tombol Sign Out HANYA muncul jika sudah login --}}
+    @auth
+    <form action="{{ route('logoutuserpage') }}" method="POST">
+        @csrf
+        <button type="submit" class="logout-link">
+            <img src="{{ asset('images/logout.png') }}" class="logout-icon">
+            Sign Out
+        </button>
+    </form>
+    @endauth
 </nav>
 
-{{-- GREETING --}}
-<div class="greeting">
-    <h3>Halo, {{ auth()->user()->name ?? 'User' }}</h3>
+<div class="greeting" style="padding: 20px 5%;">
+    <h3 style="color: #333;">Halo, {{ auth()->user()->name }}</h3>
 </div>
 
-{{-- MENU --}}
-<div class="user-section">
-    <div class="menu">
-
-        <a href="/diproses" class="menu-item">
-            <img src="{{ asset('images/processed.png') }}">
-            <p>Diproses</p>
-        </a>
-
-        <a href="/dikirim" class="menu-shipping">
-            <img src="{{ asset('images/shipping.png') }}">
-            <p>Dikirim</p>
-        </a>
-
-        <a href="/selesai" class="menu-finished">
-            <img src="{{ asset('images/finished.png') }}">
-            <p>Selesai</p>
-        </a>
-
-        <a href="/" class="menu-catalog">
-            <img src="{{ asset('images/catalog.png') }}">
-            <p>Katalog</p>
-        </a>
-
+{{-- KONTEN UTAMA (Hanya Muncul Jika Login) --}}
+@auth
+    {{-- MENU --}}
+    <div class="user-section">
+        <div class="menu">
+            <a href="{{ route('user.processed') }}" class="menu-item">
+                <img src="{{ asset('images/processed.png') }}">
+                <p>Diproses</p>
+            </a>
+            <a href="{{ route('user.shipping') }}" class="menu-shipping">
+                <img src="{{ asset('images/shipping.png') }}">
+                <p>Dikirim</p>
+            </a>
+            <a href="{{ route('user.history') }}" class="menu-finished">
+                <img src="{{ asset('images/finished.png') }}">
+                <p>Selesai</p>
+            </a>
+            <a href="/" class="menu-catalog">
+                <img src="{{ asset('images/catalog.png') }}">
+                <p>Katalog</p>
+            </a>
+        </div>
     </div>
-</div>
+@else
+    {{-- TAMPILAN JIKA GUEST (Belum Login) --}}
+    <div style="padding: 80px 5%; text-align: center;">
+        <h3 style="margin-bottom: 10px; color: #333;">Anda Belum Login</h3>
+        <p style="margin-bottom: 25px; color: #666;">Silakan login terlebih dahulu untuk melihat riwayat pesanan dan menu pengguna.</p>
+        <a href="{{ route('login') }}" style="padding: 10px 25px; background-color: #b0435e; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">Masuk ke Akun</a>
+    </div>
+@endauth
 
 {{-- CONTACT --}}
 <section class="contact">
@@ -69,27 +75,23 @@
     </div>
 
     <div>
-    <h2>Alamat & Kontak</h2>
-    <p class="contact-item">
-    <img src="{{ asset('images/location.png') }}" class="icon">
-    <span>
-        Kalimati, Tirtomartani, Kec. Kalasan, Kabupaten Sleman,
-        Daerah Istimewa Yogyakarta 55571
-    </span>
-</p>
+        <h2>Alamat & Kontak</h2>
+        <p class="contact-item">
+            <img src="{{ asset('images/location.png') }}" class="icon">
+            <span>Kalimati, Tirtomartani, Kec. Kalasan, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55571</span>
+        </p>
 
-<p class="contact-item">
-    <img src="{{ asset('images/whatsapp.png') }}" class="icon">
-    <span>+62 896-1294-622</span>
-</p>
+        <p class="contact-item">
+            <img src="{{ asset('images/whatsapp.png') }}" class="icon">
+            <span>+62 896-1294-622</span>
+        </p>
 
-<p class="contact-item">
-    <img src="{{ asset('images/email.png') }}" class="icon">
-    <span>email@gmail.com</span>
-</p>
-</div>
+        <p class="contact-item">
+            <img src="{{ asset('images/email.png') }}" class="icon">
+            <span>email@gmail.com</span>
+        </p>
+    </div>
 </section>
 
 </body>
 </html>
-

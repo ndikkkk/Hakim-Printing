@@ -9,7 +9,8 @@
 <body>
 
 <div class="header">
-    <img src="{{ asset('images/logo.png') }}" class="logo">
+    {{-- hapus sementara --}}
+        {{-- <img src="{{ asset('images/logo.png') }}"> --}}
 
     <h2>Pesanan Diproses</h2>
 
@@ -18,41 +19,27 @@
 
 <div class="container">
 
-    <div class="order-card">
-        <div class="left">
-            <h4>Product A</h4>
-            <p>x 200</p>
-            <p class="price">Rp. xxxxx,xx</p>
-        </div>
-        <div class="right">
-            <p>No Resi:</p>
-            <span>xxxxxxxxxxxxxxxxxxxx</span>
-        </div>
-    </div>
-
-    <div class="order-card">
-        <div class="left">
-            <h4>Product A</h4>
-            <p>x 200</p>
-            <p class="price">Rp. xxxxx,xx</p>
-        </div>
-        <div class="right">
-            <p>No Resi:</p>
-            <span>xxxxxxxxxxxxxxxxxxxx</span>
-        </div>
-    </div>
-
-    <div class="order-card">
-        <div class="left">
-            <h4>Product A</h4>
-            <p>x 200</p>
-            <p class="price">Rp. xxxxx,xx</p>
-        </div>
-        <div class="right">
-            <p>No Resi:</p>
-            <span>xxxxxxxxxxxxxxxxxxxx</span>
-        </div>
-    </div>
+    @if(isset($orders) && $orders->count() > 0)
+        @foreach($orders as $order)
+            <div class="order-card">
+                <div class="left">
+                    <h4>{{ $order->order_number }}</h4>
+                    <p>x {{ $order->quantity }} lembar</p>
+                    <p class="price">Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
+                </div>
+                <div class="right">
+                    <p>Status Pembayaran:</p>
+                    <span style="font-weight: bold; color: #28a745;">LUNAS</span>
+                    <p style="margin-top: 10px;">Resi:</p>
+                    <span style="color: #999; font-style: italic;">Menunggu admin input resi...</span>
+                </div>
+            </div>
+        @endforeach
+    @else
+        <p style="text-align: center; color: #666; padding: 40px 0;">
+            Tidak ada pesanan yang sedang diproses.
+        </p>
+    @endif
 
 </div>
 

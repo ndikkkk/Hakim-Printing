@@ -12,7 +12,8 @@
 
     {{-- HEADER --}}
     <div class="navbar">
-        <img src="{{ asset('images/logo.png') }}">
+        {{-- hapus sementara --}}
+        {{-- <img src="{{ asset('images/logo.png') }}"> --}}
         <h2>Informasi Pesanan</h2>
     </div>
 

@@ -30,36 +30,37 @@
 <div class="user-section">
     <div class="menu">
 
-        <a href="/tambah-produk" class="menu-item">
+        <div class="menu">
+        <a href="/admin/add-product" class="menu-item">
             <img src="{{ asset('images/add-catalog.png') }}">
             <p>Tambah Produk</p>
         </a>
 
-        <a href="/diproses-admin" class="menu-item">
+        <a href="/admin/order-processed" class="menu-item">
             <img src="{{ asset('images/processed.png') }}">
             <p>Diproses</p>
         </a>
 
-        <a href="/dikirim-admin" class="menu-item">
+        <a href="/admin/shipping" class="menu-item">
             <img src="{{ asset('images/shipping.png') }}">
             <p>Dikirim</p>
         </a>
 
-        <a href="/history-admin" class="menu-item">
+        <a href="/admin/history" class="menu-item">
             <img src="{{ asset('images/finished.png') }}">
             <p>Daftar Pesanan</p>
         </a>
-
     </div>
 </div>
 
-<section class="contact section-pink" id="contact">
+<section class="contact">
     <div class="map">
         <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.473457428458!2d110.46122197457171!3d-7.73949849227904!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a5b0015672ad5%3A0xfc2cac214650f77e!2sHakim%20Printing!5e0!3m2!1sid!2sid!4v1774552938299!5m2!1sid!2sid"
             width="200"
             height="200"
             style="border:0;"
+            allowfullscreen=""
             loading="lazy">
         </iframe>
     </div>

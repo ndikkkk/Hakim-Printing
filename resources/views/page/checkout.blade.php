@@ -267,29 +267,7 @@
         });
     </script>
 
-    {{-- TAMBAHKAN KODE INI TEPAT DI ATAS </body>
-    @if (isset($snapToken))
-        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}">
-        </script>
-        <script>
-            // Begitu halaman termuat, langsung tembak pop-up Midtrans
-            window.snap.pay('{{ $snapToken }}', {
-                onSuccess: function(result) {
-                    // Kalau berhasil dibayar, baru dilempar ke halaman Terima Kasih punya mas
-                    window.location.href = "{{ route('order.confirm') }}";
-                },
-                onPending: function(result) {
-                    alert("Menunggu pembayaran Anda!");
-                },
-                onError: function(result) {
-                    alert("Pembayaran gagal!");
-                }
-            });
-        </script>
-    @endif
-    --}}
-
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}">
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}">
     </script>
 </body>
 

@@ -34,7 +34,7 @@
                     </form>
                 </li>
             @elseif(Auth::check())
-                <li><a href="#">Halo, {{ Auth::user()->name }}</a></li>
+                {{--<li><a href="#">Halo, {{ Auth::user()->name }}</a></li>--}}
                 <li><a href="/user">Dashboard</a></li>
                 <li>
                     <form action="{{ route('logoutuserpage') }}" method="POST">
