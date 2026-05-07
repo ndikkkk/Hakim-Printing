@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="{{ asset('css/style-confirm.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 
 <body>

@@ -6,6 +6,7 @@
     <title>Halaman Admin</title>
 
     <link rel="stylesheet" href="{{ asset('css/style-userpage.css') }}">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 <body>
 
@@ -27,13 +28,24 @@
     <h3>Halo, {{ auth()->user()->name ?? 'Admin' }}</h3>
 </div>
 
+
 <div class="user-section">
     <div class="menu">
 
         <div class="menu">
+        <a href="/" class="menu-item">
+            <img src="{{ asset('images/logo.png') }}">
+            <p>Ke Halaman Home</p>
+        </a>
+
         <a href="/admin/add-product" class="menu-item">
             <img src="{{ asset('images/add-catalog.png') }}">
             <p>Tambah Produk</p>
+        </a>
+
+        <a href="{{ route('admin.product.list') }}" class="menu-item">
+            <img src="{{ asset('images/finished.png') }}">
+            <p>Daftar Produk</p>
         </a>
 
         <a href="/admin/order-processed" class="menu-item">
@@ -52,6 +64,7 @@
         </a>
     </div>
 </div>
+
 
 <section class="contact">
     <div class="map">

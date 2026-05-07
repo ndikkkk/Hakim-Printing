@@ -247,3 +247,13 @@ section:nth-of-type(even) {
         margin-left: 0;
     }
 }
+
+/* Mengatur ukuran gambar yang punya class .logo */
+.logo {
+    width: 90px; /* Atur lebar sesuai kebutuhan */
+    height: auto; /* Biar proporsinya ga gepeng */
+
+    /* Tambahan opsional biar rapi posisinya di header */
+    display: block;
+    object-fit: contain; /* Memastikan gambar tidak terpotong */
+}

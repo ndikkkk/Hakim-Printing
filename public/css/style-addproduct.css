@@ -61,6 +61,7 @@ label {
 }
 
 input[type="text"],
+input[type="number"],
 input[type="file"] {
     padding: 10px;
     border: 1px solid #644c2a;
@@ -70,10 +71,20 @@ input[type="file"] {
     background: transparent;
 }
 
+/* Hilangkan spinner/arrow di input angka */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
 .btn-container {
-    margin-top: -30px;
+    margin-top: 30px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 button {

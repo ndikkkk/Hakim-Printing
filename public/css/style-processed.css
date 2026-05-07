@@ -30,6 +30,12 @@ body {
     font-size: 14px;
 }
 
+.logo {
+    width: 80px;
+    height: auto;
+    object-fit: contain;
+}
+
 .container {
     padding: 20px;
 }

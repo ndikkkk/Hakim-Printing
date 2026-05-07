@@ -15,4 +15,10 @@ class HomeController extends Controller
         // Melempar data produk ke halaman home
         return view('page.home', compact('products'));
     }
+
+    public function showDetail($id)
+    {
+        $product = Product::findOrFail($id);
+        return view('page.detail-product', compact('product'));
+    }
 }

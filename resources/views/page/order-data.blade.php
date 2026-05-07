@@ -5,12 +5,12 @@
     <link rel="stylesheet" href="{{ asset('css/style-orderdata.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/4c3b1f73a2.js" crossorigin="anonymous"></script>
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 <body>
 
 <div class="navbar">
-    {{-- hapus sementara --}}
-    {{-- <img src="{{ asset('images/logo.png') }}"> --}}
+    <img src="{{ asset('images/logo.png') }}" class="logo" alt="Logo">
     <h2>Data Pesanan</h2>
 </div>
 
@@ -119,6 +119,8 @@
 
                 // 2. JIKA SUKSES, TAMPILKAN KOTA
                 let cities = data.data || [];
+                // Sort alfabetis
+                cities.sort((a, b) => a.name.localeCompare(b.name, 'id'));
                 citySelect.innerHTML = '<option value="">-- Pilih Kota --</option>';
 
                 if (cities.length === 0) {

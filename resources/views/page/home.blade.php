@@ -5,6 +5,7 @@
     <title>Hakim Printing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ asset('css/style-home.css') }}">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 
 <body>
@@ -22,11 +23,7 @@
             {{-- ini buat ujicoba login & routing bagian front end, nanti tinggal diganti dikit aja kalo dh masukin role di db --}}
 
             @if (Auth::check() && Auth::user()->role == 'admin')
-                <li><a href="#">Halo, {{ Auth::user()->name }}</a></li>
-                <li><a href="#">Tambah Katalog</a></li>
-                <li><a href="/diproses">Diproses</a></li>
-                <li><a href="/dikirim">Dikirim</a></li>
-                <li><a href="/selesai">Daftar Pesanan</a></li>
+                <li><a href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
                 <li>
                     <form action="{{ route('logoutadminpage') }}" method="POST">
                         @csrf
@@ -79,16 +76,28 @@
                         {{-- Link ke halaman detail membawa ID produk --}}
                         <a href="{{ route('product.detail', ['id' => $item->id]) }}#detail">
                             <div class="card-img">
-                                <img src="{{ asset('images/' . $item->image) }}" alt="{{ $item->name }}">
+                                <img src="{{ Str::startsWith($item->image, 'products/') ? asset('storage/' . $item->image) : asset('images/' . $item->image) }}" alt="{{ $item->name }}">
                             </div>
                         </a>
                         <h3>{{ $item->name }}</h3>
                         <p>{{ Str::limit($item->description, 40) }}</p>
                         <p class="price">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
-                        {{-- Tombol pesan diarahkan ke form order dengan membawa ID produk --}}
-                        <a href="{{ route('order.info', ['product_id' => $item->id]) }}">
-                            <button>Pesan</button>
-                        </a>
+                        @if(Auth::check() && Auth::user()->role == 'admin')
+                            <div style="display:flex; gap:10px; margin-top:auto;">
+                                <a href="{{ route('admin.product.edit', $item->id) }}" style="text-decoration:none;">
+                                    <button style="background-color:#f0a500; color:#fff; border:none; border-radius:4px; padding:8px 15px; cursor:pointer;">Edit</button>
+                                </a>
+                                <form action="{{ route('admin.product.destroy', $item->id) }}" method="POST" style="margin:0;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Hapus produk ini?')" style="background-color:#e53e3e; color:#fff; border:none; border-radius:4px; padding:8px 15px; cursor:pointer;">Hapus</button>
+                                </form>
+                            </div>
+                        @else
+                            <a href="{{ route('order.info', ['product_id' => $item->id]) }}" style="margin-top:auto;">
+                                <button>Pesan</button>
+                            </a>
+                        @endif
                     </div>
                 @endforeach
             </div>

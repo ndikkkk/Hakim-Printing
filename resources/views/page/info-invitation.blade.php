@@ -6,6 +6,7 @@
 
     <link rel="stylesheet" href="{{ asset('css/style-info-invitation.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 
 <body>
@@ -28,7 +29,7 @@
     <div class="card-container">
         <div class="card">
 
-            <form action="{{ route('order.info.process') }}" method="POST">
+            <form action="{{ route('order.info.process') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 {{-- Tambahkan input hidden untuk product_id --}}
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -180,6 +181,17 @@
                             <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
                         @enderror
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload File Foto/Desain Kustom (Opsional)</label>
+                    <div class="input-box">
+                        <input type="file" name="design_image" accept="image/*,.pdf" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; box-sizing: border-box;">
+                        @error('design_image')
+                            <span class="error-msg" style="color:red; font-size:12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <small style="color: #666; font-size: 11px;">Format: JPG, PNG, PDF. Maks: 5MB.</small>
                 </div>
 
                 <div class="btn">

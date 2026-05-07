@@ -20,6 +20,12 @@ body {
     text-align: center;
 }
 
+.logo {
+    width: 80px;
+    height: auto;
+    object-fit: contain;
+}
+
 .bg {
     position: relative;
 }
@@ -78,6 +84,16 @@ body {
     outline: none;
     font-size: 14px;
     background: transparent;
+}
+
+/* Hilangkan spinner di input angka */
+.input-box input[type="number"]::-webkit-inner-spin-button,
+.input-box input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.input-box input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 .btn {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ asset('css/style-userpage.css') }}">
     <title>Halaman Pengguna</title>
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 <body>
 

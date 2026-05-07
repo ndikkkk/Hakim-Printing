@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\Http; // Untuk panggilan API eksternal (RajaOngki
 use Midtrans\Config;
 use Midtrans\Snap;
 use App\Models\Order;
+use App\Models\InvitationData;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderNotification;
 
 class OrderController extends Controller
 {
@@ -59,7 +62,13 @@ class OrderController extends Controller
             'event_time' => 'required|string',
             'location_maps' => 'required|url', // Memastikan format link URL
             'quotes' => 'nullable|string', // Opsional
+            'design_image' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
+
+        if ($request->hasFile('design_image')) {
+            $path = $request->file('design_image')->store('invitation_designs', 'public');
+            $validatedData['design_image'] = $path;
+        }
 
         // Simpan data ke Session sementara
         Session::put('invitation_data', $validatedData);
@@ -83,6 +92,7 @@ class OrderController extends Controller
                         ->get('https://rajaongkir.komerce.id/api/v1/destination/province');
 
         $provinces = $response['data'] ?? [];
+        usort($provinces, fn($a, $b) => strcmp($a['name'], $b['name']));
 
         return view('page.order-data', compact('orderData', 'provinces'));
     }
@@ -168,6 +178,12 @@ class OrderController extends Controller
             return redirect()->route('home')->with('error', 'Data tidak lengkap.');
         }
 
+        // Hapus order pending lama milik user ini (jika payment dibatalkan lalu coba lagi)
+        \App\Models\Order::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->where('product_id', $product['id'])
+            ->where('payment_status', 'pending')
+            ->delete();
+
         // 1. Simpan Pesanan (KINI SUDAH DISESUAIKAN DENGAN MIGRATION MAS)
         $order = \App\Models\Order::create([
             'order_number'   => 'INV-' . strtoupper(uniqid()),
@@ -180,7 +196,26 @@ class OrderController extends Controller
             'payment_status' => 'pending',
         ]);
 
-        // 2. Setting Midtrans
+        // 2. Simpan data undangan ke tabel invitation_data
+        InvitationData::create([
+            'order_id'      => $order->id,
+            'groom_name'    => $invitation['groom_name'],
+            'groom_father'  => $invitation['groom_father'],
+            'groom_mother'  => $invitation['groom_mother'],
+            'bride_name'    => $invitation['bride_name'],
+            'bride_father'  => $invitation['bride_father'],
+            'bride_mother'  => $invitation['bride_mother'],
+            'akad_date'     => $invitation['akad_date'],
+            'akad_time'     => $invitation['akad_time'],
+            'akad_location' => $invitation['akad_location'],
+            'event_date'    => $invitation['event_date'],
+            'event_time'    => $invitation['event_time'],
+            'location_maps' => $invitation['location_maps'],
+            'quotes'        => $invitation['quotes'] ?? null,
+            'design_image'  => $invitation['design_image'] ?? null,
+        ]);
+
+        // 3. Setting Midtrans
         \Midtrans\Config::$serverKey = config('services.midtrans.server_key');
         \Midtrans\Config::$isProduction = config('services.midtrans.is_production');
         \Midtrans\Config::$isSanitized = true;
@@ -219,7 +254,14 @@ class OrderController extends Controller
         if ($order) {
             // 3. Cek status transaksi dari Midtrans dan update database
             if ($request->transaction_status == 'capture' || $request->transaction_status == 'settlement') {
-                $order->update(['payment_status' => 'success']);
+                if ($order->payment_status !== 'success') {
+                    $order->update(['payment_status' => 'success']);
+                    try {
+                        Mail::to($order->user->email)->send(new OrderNotification($order, 'Pembayaran untuk pesanan Anda telah berhasil dikonfirmasi. Pesanan Anda akan segera kami proses untuk dicetak.'));
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::error('Mail Error: ' . $e->getMessage());
+                    }
+                }
             } elseif (in_array($request->transaction_status, ['cancel', 'deny', 'expire'])) {
                 $order->update(['payment_status' => 'failed']);
             } elseif ($request->transaction_status == 'pending') {
@@ -247,17 +289,31 @@ class OrderController extends Controller
             'payment_status' => 'success' // Pastikan statusnya sudah success sebelum input resi
         ]);
 
+        try {
+            Mail::to($order->user->email)->send(new OrderNotification($order, 'Pesanan Anda telah dikirim! Nomor resi Anda adalah: ' . $request->resi . '. Paket Anda akan segera tiba di alamat tujuan.'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Mail Error: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Nomor resi berhasil disimpan. Pesanan akan segera dikirim.');
     }
 
     public function confirmReceived($id)
-{
-    $order = \App\Models\Order::where('id', $id)
-                ->where('user_id', \Illuminate\Support\Facades\Auth::id())
-                ->firstOrFail();
+    {
+        $order = \App\Models\Order::where('id', $id)
+                    ->where('user_id', \Illuminate\Support\Facades\Auth::id())
+                    ->firstOrFail();
 
-    $order->update(['is_received' => true]);
+        $order->update(['is_received' => true, 'shipping_status' => 'delivered']);
 
-    return redirect()->route('user.history')->with('success', 'Pesanan dikonfirmasi sudah diterima!');
-}
+        return redirect()->route('user.history')->with('success', 'Pesanan dikonfirmasi sudah diterima!');
+    }
+
+    public function updateShippingStatus(Request $request, $id)
+    {
+        $order = \App\Models\Order::findOrFail($id);
+        $order->update(['shipping_status' => 'in_transit']);
+
+        return redirect()->back()->with('success', 'Status diperbarui: paket menuju alamat penerima.');
+    }
 }

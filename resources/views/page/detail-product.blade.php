@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="{{ asset('css/style-detailproduct.css') }}">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 <body>
 
@@ -49,30 +50,38 @@
 
         {{-- HEADER --}}
         <div class="detail-header">
-            <h2>Product A</h2>
+            <h2>{{ $product->name }}</h2>
             <a href="/" class="close-btn">✕</a>
         </div>
 
         {{-- IMAGE --}}
         <div class="detail-images">
-            <img src="{{ asset('images/img2.jpeg') }}" alt="">
-            <img src="{{ asset('images/img2.jpeg') }}" alt="">
-            <img src="{{ asset('images/img2.jpeg') }}" alt="">
+            <img src="{{ Str::startsWith($product->image, 'products/') ? asset('storage/' . $product->image) : asset('images/' . $product->image) }}" alt="{{ $product->name }}">
         </div>
 
         {{-- DESKRIPSI --}}
         <div class="detail-desc">
             <h3>Deskripsi:</h3>
 
-            <p>Ukuran Undangan: 10 x 10 cm</p>
-            <p>Jenis Kertas: Art Glossy</p>
-            <p>Ketebalan Kertas: 230 gsm</p>
-            <p>Jumlah Halaman: 1 Lembar & Amplop</p>
-            <p>Minimal Order: 100 lembar</p>
+            <p>{{ $product->description }}</p>
+            <p>Harga: Rp {{ number_format($product->price, 0, ',', '.') }}</p>
 
-            <a href="/order/{{ $id }}">
-                <button>Pesan</button>
-            </a>
+            @if(Auth::check() && Auth::user()->role == 'admin')
+                <div style="display:flex; gap:10px;">
+                    <a href="{{ route('admin.product.edit', $product->id) }}" style="text-decoration:none;">
+                        <button style="background-color:#f0a500; color:#fff; border:none; border-radius:4px; padding:10px 20px; cursor:pointer;">Edit</button>
+                    </a>
+                    <form action="{{ route('admin.product.destroy', $product->id) }}" method="POST" style="margin:0;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" onclick="return confirm('Hapus produk ini?')" style="background-color:#e53e3e; color:#fff; border:none; border-radius:4px; padding:10px 20px; cursor:pointer;">Hapus</button>
+                    </form>
+                </div>
+            @else
+                <a href="{{ route('order.info', ['product_id' => $product->id]) }}">
+                    <button>Pesan</button>
+                </a>
+            @endif
         </div>
 
     </div>

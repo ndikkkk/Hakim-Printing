@@ -4,19 +4,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthController; // Panggil AuthController
+use App\Http\Controllers\AdminProductController;
 
 // ==========================================
 // PUBLIC ROUTES (Tampilan Depan / User)
 // ==========================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/detail-product', function () { return view('page.detail-product'); })->name('product.detail');
+Route::get('/detail-product/{id}', [HomeController::class, 'showDetail'])->name('product.detail');
 
 // ==========================================
 // AUTH ROUTES (Sign In / Sign Up / Logout)
 // ==========================================
 Route::middleware('guest')->group(function () {
     Route::get('/signin', [AuthController::class, 'showLoginForm'])->name('signin');
-    Route::post('/signin', [AuthController::class, 'login'])->name('signin.process');
+    Route::post('/signin', [AuthController::class, 'login'])->name('signin.process')->middleware('throttle:5,1');
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 
     Route::get('/signup', [AuthController::class, 'showRegistrationForm'])->name('signup');
@@ -64,7 +65,7 @@ Route::get('/user', function () {
 // Diproses: lunas, belum ada resi
 Route::get('/diproses', function () {
     $orders = \App\Models\Order::where('user_id', \Illuminate\Support\Facades\Auth::id())
-                ->where('payment_status', 'success', 'pending')
+                ->where('payment_status', 'success')
                 ->whereNull('resi')
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -97,31 +98,35 @@ Route::post('/order/{id}/terima', [\App\Http\Controllers\OrderController::class,
     ->name('user.confirm-received');
 
 // --- ADMIN ROUTES (tambah middleware auth) ---
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', function () { return view('admin.admin-page'); })->name('dashboard');
     Route::get('/add-product', function () { return view('admin.add-product'); })->name('product.add');
+    Route::post('/add-product', [AdminProductController::class, 'store'])->name('product.store');
+
+    Route::get('/products', [AdminProductController::class, 'index'])->name('product.list');
+    Route::get('/edit-product/{id}', [AdminProductController::class, 'edit'])->name('product.edit');
+    Route::put('/edit-product/{id}', [AdminProductController::class, 'update'])->name('product.update');
+    Route::delete('/product/{id}', [AdminProductController::class, 'destroy'])->name('product.destroy');
 
     Route::get('/order-processed', function () {
-        $orders = \App\Models\Order::whereNull('resi')
-                    ->where(function($query) {
-                        $query->where('payment_status', 'success')
-                              ->orWhere('payment_status', 'pending');
-                    })
-                    ->orderBy('created_at', 'desc')->get();
+        $orders = \App\Models\Order::where('payment_status', 'success')
+                    ->whereNull('resi')
+                    ->orderBy('created_at', 'desc')->paginate(15);
         return view('admin.order-processed', compact('orders'));
     })->name('order.processed');
 
     Route::post('/order/{id}/resi', [OrderController::class, 'inputResi'])->name('order.resi');
+    Route::post('/order/{id}/shipping-status', [OrderController::class, 'updateShippingStatus'])->name('order.shipping.status');
 
     Route::get('/shipping', function () {
         $orders = \App\Models\Order::where('payment_status', 'success')
                     ->whereNotNull('resi')
-                    ->orderBy('created_at', 'desc')->get();
+                    ->orderBy('created_at', 'desc')->paginate(15);
         return view('admin.shipping-admin', compact('orders'));
     })->name('shipping');
 
     Route::get('/history', function () {
-        $orders = \App\Models\Order::orderBy('created_at', 'desc')->get();
+        $orders = \App\Models\Order::orderBy('created_at', 'desc')->paginate(15);
         return view('admin.admin-history', compact('orders'));
     })->name('history');
 });

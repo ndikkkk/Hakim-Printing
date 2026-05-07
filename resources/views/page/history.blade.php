@@ -6,17 +6,15 @@
     <title>Pesanan Selesai</title>
 
     <link rel="stylesheet" href="{{ asset('css/style-shipping.css') }}">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 
 <body>
 
     {{-- HEADER --}}
     <div class="header">
-        {{-- hapus sementara --}}
-        {{-- <img src="{{ asset('images/logo.png') }}"> --}}
-
+        <img src="{{ asset('images/logo.png') }}" class="logo" alt="Logo">
         <h2>Pesanan Selesai</h2>
-
         <a href="{{ route('page.user') }}" class="back">Back</a>
     </div>
 

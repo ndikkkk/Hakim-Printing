@@ -5,6 +5,7 @@
     <title>Checkout</title>
     <link rel="stylesheet" href="{{ asset('css/style-checkout.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 
 <body>
@@ -38,7 +39,7 @@
 
             <div class="produk-item">
                 <div class="produk-img">
-                    <img src="{{ asset('images/' . $product['image']) }}">
+                    <img src="{{ Str::startsWith($product['image'], 'products/') ? asset('storage/' . $product['image']) : asset('images/' . $product['image']) }}">
                 </div>
                 <div class="produk-detail">
                     <h4>{{ $product['name'] ?? 'Produk Tidak Terpilih' }}</h4>

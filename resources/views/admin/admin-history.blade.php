@@ -6,6 +6,7 @@
     <title>Pesanan Selesai</title>
 
     <link rel="stylesheet" href="{{ asset('css/style-history.css') }}">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 </head>
 
 <body>
@@ -46,6 +47,7 @@
         @else
             <p style="text-align: center;">Belum ada pesanan yang diproses.</p>
         @endif
+        <div style="margin-top:1rem;">{{ $orders->links() }}</div>
     </div>
 
 </body>
