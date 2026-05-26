@@ -42,7 +42,12 @@
                 <div class="input-group">
                     <img src="{{ asset('images/password.png') }}" class="icon">
                     <input type="password" name="password" id="password" required maxlength="100">
-                    <img src="{{ asset('images/eye.png') }}" class="eye-icon" onclick="togglePassword('password', this)" title="Tampilkan password" onerror="this.style.display='none'">
+                    <span class="eye-icon" onclick="togglePassword('password', this)" title="Tampilkan password" style="cursor: pointer;">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
                 </div>
                 <div class="pw-footer">
                     <span class="char-counter" id="char-counter">0/100</span>
@@ -64,7 +69,12 @@
                 <div class="input-group" id="confirm-group">
                     <img src="{{ asset('images/password.png') }}" class="icon">
                     <input type="password" name="password_confirmation" id="password_confirmation" required>
-                    <img src="{{ asset('images/eye.png') }}" class="eye-icon" onclick="togglePassword('password_confirmation', this)" title="Tampilkan password" onerror="this.style.display='none'">
+                    <span class="eye-icon" onclick="togglePassword('password_confirmation', this)" title="Tampilkan password" style="cursor: pointer;">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
                 </div>
                 <div class="error-msg" id="confirm-error">Password tidak cocok!</div>
 
@@ -84,6 +94,12 @@
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.style.opacity = '1';
+                
+                // Kembalikan ke password otomatis setelah 1 detik (1000ms)
+                setTimeout(() => {
+                    input.type = 'password';
+                    icon.style.opacity = '0.6';
+                }, 1000);
             } else {
                 input.type = 'password';
                 icon.style.opacity = '0.6';

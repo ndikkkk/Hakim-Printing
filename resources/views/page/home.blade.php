@@ -65,7 +65,7 @@
     {{-- PRODUCT --}}
     {{-- Kita bagi data produk per 5 item, lalu latar belakangnya dibuat selang-seling --}}
     @foreach ($products->chunk(5) as $index => $chunk)
-        <section class="product {{ $index % 2 == 0 ? 'section-pink' : 'section-cream' }}" {!! $index == 0 ? 'id="product"' : '' !!}>
+        <section class="product {{ $index % 2 == 0 ? 'section-pink' : 'section-cream' }} {{ $index >= 2 ? 'hidden-product-section' : '' }}" {!! $index == 0 ? 'id="product"' : '' !!} {!! $index >= 2 ? 'style="display:none;"' : '' !!}>
             @if ($index == 0)
                 <h2>Product</h2>
             @endif
@@ -103,6 +103,30 @@
             </div>
         </section>
     @endforeach
+
+    @if ($products->count() > 10)
+        <div style="text-align:center; padding: 30px; background-color: #fcf9f2;" id="show-more-container">
+            <button onclick="showMoreProducts()" style="background-color:#b0435e; color:white; padding:10px 25px; border:none; border-radius:5px; cursor:pointer; font-size:16px; font-weight:bold;">Tampilkan Lebih Banyak</button>
+        </div>
+        <script>
+            function showMoreProducts() {
+                // Cari semua section produk yang masih disembunyikan
+                const hiddenSections = document.querySelectorAll('.hidden-product-section[style*="display: none"]');
+                
+                // Tampilkan maksimal 2 section (karena 1 section = 5 produk, 2 section = 10 produk)
+                let sectionsToShow = 2;
+                for (let i = 0; i < hiddenSections.length && i < sectionsToShow; i++) {
+                    hiddenSections[i].style.display = 'block';
+                }
+
+                // Jika sudah tidak ada lagi section yang disembunyikan, hilangkan tombolnya
+                const remainingHidden = document.querySelectorAll('.hidden-product-section[style*="display: none"]');
+                if (remainingHidden.length === 0) {
+                    document.getElementById('show-more-container').style.display = 'none';
+                }
+            }
+        </script>
+    @endif
 
     {{-- CONTACT --}}
     <section class="contact section-pink" id="contact">

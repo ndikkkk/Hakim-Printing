@@ -151,19 +151,31 @@ class OrderController extends Controller
         // ID Kota asal pengiriman (Sleman = 419)
         $originCityId = 419;
 
-        // Tembak API Komerce untuk hitung ongkir (Kita gunakan kurir JNE sebagai default)
-        $response = Http::withoutVerifying()
-            ->withHeaders(['key' => env('RAJAONGKIR_API_KEY')])
-            ->asForm()
-            ->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
-                'origin' => $originCityId,
-                'destination' => $customer['city_id'],
-                'weight' => $weight,
-                'courier' => 'jne'
-            ]);
+        // Tembak API Komerce untuk hitung ongkir (JNE, TIKI, POS, JNT)
+        $couriers = ['jne', 'tiki', 'pos', 'jnt'];
+        $costs = [];
 
-        // Ambil daftar layanan ongkir dari response
-        $costs = $response['data'] ?? [];
+        foreach ($couriers as $courier) {
+            try {
+                $response = Http::withoutVerifying()
+                    ->withHeaders(['key' => env('RAJAONGKIR_API_KEY')])
+                    ->asForm()
+                    ->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
+                        'origin' => $originCityId,
+                        'destination' => $customer['city_id'],
+                        'weight' => $weight,
+                        'courier' => $courier
+                    ]);
+
+                $data = $response['data'] ?? [];
+                foreach ($data as $item) {
+                    $costs[] = $item;
+                }
+            } catch (\Exception $e) {
+                // Skip jika salah satu kurir gagal
+                continue;
+            }
+        }
 
         return view('page.checkout', compact('invitation', 'customer', 'costs', 'weight'));
     }
@@ -257,7 +269,14 @@ class OrderController extends Controller
                 if ($order->payment_status !== 'success') {
                     $order->update(['payment_status' => 'success']);
                     try {
+                        // Email ke Customer
                         Mail::to($order->user->email)->send(new OrderNotification($order, 'Pembayaran untuk pesanan Anda telah berhasil dikonfirmasi. Pesanan Anda akan segera kami proses untuk dicetak.'));
+                        
+                        // Email ke Admin
+                        $admin = \App\Models\User::where('role', 'admin')->first();
+                        if ($admin) {
+                            Mail::to($admin->email)->send(new OrderNotification($order, 'PESANAN BARU! Pelanggan telah berhasil melakukan pembayaran. Segera cek dasbor admin untuk memproses pesanan ini.'));
+                        }
                     } catch (\Exception $e) {
                         \Illuminate\Support\Facades\Log::error('Mail Error: ' . $e->getMessage());
                     }
@@ -272,6 +291,28 @@ class OrderController extends Controller
 
     // 4. Balas Midtrans dengan response 200 OK agar mereka tahu data sudah kita terima
     return response()->json(['message' => 'Callback diproses']);
+}
+
+// Fungsi alternatif untuk localhost tanpa ngrok
+public function manualSuccess($order_number)
+{
+    $order = \App\Models\Order::where('order_number', $order_number)->first();
+    if ($order && $order->payment_status !== 'success') {
+        $order->update(['payment_status' => 'success']);
+        try {
+            // Email ke Customer
+            Mail::to($order->user->email)->send(new OrderNotification($order, 'Pembayaran untuk pesanan Anda telah berhasil dikonfirmasi. Pesanan Anda akan segera kami proses untuk dicetak.'));
+            
+            // Email ke Admin
+            $admin = \App\Models\User::where('role', 'admin')->first();
+            if ($admin) {
+                Mail::to($admin->email)->send(new OrderNotification($order, 'PESANAN BARU! Pelanggan telah berhasil melakukan pembayaran. Segera cek dasbor admin untuk memproses pesanan ini.'));
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Mail Error: ' . $e->getMessage());
+        }
+    }
+    return redirect()->route('order.confirm');
 }
 // Menyimpan nomor resi yang diinput admin
     public function inputResi(Request $request, $id)

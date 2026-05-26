@@ -25,19 +25,24 @@
                     <input type="email" name="email" id="email" value="{{ old('email') }}" required>
                 </div>
                 <div class="error-msg" id="email-error">Format email tidak valid.</div>
-                @error('email')
-                    <span style="color:#b0435e; font-size:12px;">{{ $message }}</span>
-                @enderror
 
                 <label>Password</label>
                 <div class="input-group">
                     <img src="{{ asset('images/password.png') }}" class="icon">
                     <input type="password" name="password" id="password" required>
-                    <img src="{{ asset('images/eye.png') }}" class="eye-icon" onclick="togglePassword('password', this)" title="Tampilkan password" onerror="this.style.display='none'">
+                    <span class="eye-icon" onclick="togglePassword('password', this)" title="Tampilkan password" style="cursor: pointer;">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
                 </div>
-                @error('password')
-                    <span style="color:#b0435e; font-size:12px;">{{ $message }}</span>
-                @enderror
+                
+                @if($errors->has('email') || $errors->has('password'))
+                    <div style="background-color:#ffebee; color:#b0435e; padding:10px; border-radius:5px; margin-bottom:15px; font-size:14px; text-align:center; border:1px solid #ffcdd2;">
+                        Email atau Password salah!
+                    </div>
+                @endif
 
                 <button type="submit" id="submit-btn">Sign In</button>
 
@@ -54,6 +59,12 @@
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.style.opacity = '1';
+                
+                // Kembalikan ke password otomatis setelah 1 detik (1000ms)
+                setTimeout(() => {
+                    input.type = 'password';
+                    icon.style.opacity = '0.6';
+                }, 1000);
             } else {
                 input.type = 'password';
                 icon.style.opacity = '0.6';

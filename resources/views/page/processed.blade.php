@@ -25,11 +25,14 @@
                     <p>x {{ $order->quantity }} lembar</p>
                     <p class="price">Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
                 </div>
-                <div class="right">
+                <div class="right" style="text-align: right;">
                     <p>Status Pembayaran:</p>
                     <span style="font-weight: bold; color: #28a745;">LUNAS</span>
                     <p style="margin-top: 10px;">Resi:</p>
-                    <span style="color: #999; font-style: italic;">Menunggu admin input resi...</span>
+                    <span style="color: #999; font-style: italic; display:block; margin-bottom:10px;">Menunggu admin input resi...</span>
+                    
+                    {{-- Tombol Khusus untuk Demo Presentasi --}}
+                    <a href="{{ route('order.preview-email', $order->order_number) }}" target="_blank" style="display:inline-block; background-color:#e2e8f0; color:#333; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:12px; font-weight:bold;">Lihat Bukti Email</a>
                 </div>
             </div>
         @endforeach

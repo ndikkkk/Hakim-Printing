@@ -79,19 +79,19 @@
             <div class="pengiriman">
                 <h4 class="title-icon">
                     <img src="{{ asset('images/shipping.png') }}">
-                    Pengiriman (Kurir: JNE)
+                    Pengiriman
                 </h4>
 
                 <select name="shipping_cost" id="shipping_cost" required
                     style="width: 100%; padding: 10px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif;">
-                    <option value="" data-harga="0">Pilih Layanan JNE</option>
+                    <option value="" data-harga="0">Pilih Layanan Pengiriman</option>
                     @if (empty($costs))
                         <option value="" data-harga="0">Gagal memuat ongkos kirim. Silakan refresh.</option>
                     @else
                         @foreach ($costs as $cost)
                             {{-- Sesuaikan dengan format array Komerce --}}
                             <option value="{{ $cost['cost'] }}" data-harga="{{ $cost['cost'] }}">
-                                {{ $cost['name'] }} ({{ $cost['service'] }}) - Rp
+                                {{ strtoupper($cost['name'] ?? '') }} - {{ $cost['service'] }} - Rp
                                 {{ number_format($cost['cost'], 0, ',', '.') }}
                                 (Estimasi: {{ $cost['etd'] }})
                             </option>
@@ -240,8 +240,9 @@
                     if (data.snap_token) {
                         window.snap.pay(data.snap_token, {
                             onSuccess: function(result) {
-                                // Kalau berhasil bayar, arahkan ke halaman Terima Kasih
-                                window.location.href = "{{ route('order.confirm') }}";
+                                // Karena kita di localhost dan tidak ada ngrok untuk Webhook,
+                                // kita paksa update status menjadi success secara manual via route ini.
+                                window.location.href = "/order/manual-success/" + result.order_id;
                             },
                             onPending: function(result) {
                                 alert("Menunggu pembayaran Anda!");

@@ -130,3 +130,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         return view('admin.admin-history', compact('orders'));
     })->name('history');
 });
+
+// Route khusus localhost untuk menandai sukses tanpa Webhook
+Route::get('/order/manual-success/{order_number}', [OrderController::class, 'manualSuccess'])->name('order.manual.success');
+
+// Route khusus untuk DEMO PRESENTASI: Melihat tampilan email di browser (tanpa perlu nge-cek log)
+Route::get('/preview-email/{order_number}', function ($order_number) {
+    $order = \App\Models\Order::where('order_number', $order_number)->firstOrFail();
+    return new \App\Mail\OrderNotification($order, 'Ini adalah simulasi email konfirmasi pesanan yang dikirimkan ke pelanggan.');
+})->name('order.preview-email');
