@@ -1,20 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
 html {
     scroll-behavior: smooth;
 }
 
 body {
-    font-family: Poppins, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6, .hero-text h1, .about h2, .section-title, .logo {
+    font-family: 'Playfair Display', serif;
 }
 
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 50px;
-    height: 70px;
+    padding: 25px 50px;
+    height: 100px;
     box-sizing: border-box;
     background-color: #FDF8F0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.4s ease-in-out;
+}
+
+.navbar.scrolled {
+    padding: 10px 50px;
+    height: 70px;
+    background-color: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .navbar ul {
@@ -23,10 +42,40 @@ body {
     list-style: none;
 }
 
-.navbar a {
+.navbar a,
+.navbar button[type="submit"] {
     text-decoration: none;
     color: black;
     font-size: 16px;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s ease;
+    font-family: inherit;
+}
+
+.navbar.scrolled a,
+.navbar.scrolled button[type="submit"] {
+    color: #fff;
+}
+
+.navbar a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: #d6ae62;
+    bottom: -4px;
+    left: 0;
+    transition: width 0.3s ease;
+}
+
+.navbar a:hover,
+.navbar button[type="submit"]:hover {
+    color: #d6ae62;
+}
+
+.navbar a:hover::after {
+    width: 100%;
 }
 
 section:nth-of-type(odd) {
@@ -50,8 +99,44 @@ section:nth-of-type(even) {
 
 .hero-text {
     width: 50%;
-    margin-left: 85px;
-    font-size: 24px;
+    padding: 0 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero-text h1 {
+    font-size: 50px;
+    margin-bottom: 15px;
+    line-height: 1.2;
+    min-height: 120px;
+}
+
+.hero-desc {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 35px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.hero-btn {
+    padding: 14px 32px;
+    background-color: #d6ae62;
+    color: #3a2c17;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+.hero-btn:hover {
+    background-color: #bb9a5c;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(214, 174, 98, 0.4);
 }
 
 .hero img {
@@ -60,28 +145,43 @@ section:nth-of-type(even) {
 
 .about {
     display: flex;
-    padding: 40px;
-    gap: 50px;
+    padding: 80px 5%;
+    gap: 60px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .about h2 {
-    font-size: 45px;
+    font-size: 40px;
     font-weight: bold;
     color: black;
-    margin-bottom: 50px;
-    margin-top: 5px;
+    margin-bottom: 20px;
+    margin-top: 0;
+}
+
+.about p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.8;
 }
 
 .about img {
-    width: 500px;
+    width: 450px;
     height: auto;
     object-fit: contain;
+    transition: transform 0.5s ease;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.about img:hover {
+    transform: scale(1.03);
 }
 
 .about div {
     width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .product {
@@ -117,6 +217,11 @@ section:nth-of-type(even) {
     display: flex;
     flex-direction: column;
     height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.item:hover {
+    transform: translateY(-8px);
 }
 
 .card-img {
@@ -124,6 +229,14 @@ section:nth-of-type(even) {
     border-radius: 12px;
     padding: 15px;
     width: 100%;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.item:hover .card-img {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-color: #bb9a5c;
+    background: #fff;
 }
 
 .card-img img {
@@ -208,12 +321,14 @@ section:nth-of-type(even) {
     line-height: 1.4;
 }
 
-/* Mengatur ukuran gambar yang punya class .logo */
 .logo {
-    width: 90px; /* Atur lebar sesuai kebutuhan */
-    height: auto; /* Biar proporsinya ga gepeng */
-
-    /* Tambahan opsional biar rapi posisinya di header */
+    width: 110px; /* Lebar awal lebih besar */
+    height: auto;
     display: block;
-    object-fit: contain; /* Memastikan gambar tidak terpotong */
+    object-fit: contain;
+    transition: width 0.4s ease-in-out;
+}
+
+.navbar.scrolled .logo {
+    width: 75px; /* Lebar saat discroll */
 }

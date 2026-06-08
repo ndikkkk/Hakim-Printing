@@ -23,9 +23,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/signup', [AuthController::class, 'showRegistrationForm'])->name('signup');
     Route::post('/signup', [AuthController::class, 'register'])->name('signup.process');
 });
-// Rute logout saya samakan dengan tombol mas sebelumnya
-Route::any('/logout-admin', [AuthController::class, 'logout'])->name('logoutadminpage');
-Route::any('/logout-user', [AuthController::class, 'logout'])->name('logoutuserpage');
+// Rute logout diubah ke POST untuk mencegah CSRF
+Route::post('/logout-admin', [AuthController::class, 'logout'])->name('logoutadminpage');
+Route::post('/logout-user', [AuthController::class, 'logout'])->name('logoutuserpage');
 // ... (tambahkan route logout lainnya jika butuh, atau arahkan semuanya ke satu method logout)
 
 // ==========================================
@@ -129,13 +129,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         $orders = \App\Models\Order::orderBy('created_at', 'desc')->paginate(15);
         return view('admin.admin-history', compact('orders'));
     })->name('history');
+    
+    // Route khusus localhost dipindah ke dalam grup admin agar aman
+    Route::get('/order/manual-success/{order_number}', [OrderController::class, 'manualSuccess'])->name('order.manual.success');
+    
+    // Route pratinjau email dipindah ke dalam grup admin agar aman (mencegah IDOR)
+    Route::get('/preview-email/{order_number}', function ($order_number) {
+        $order = \App\Models\Order::where('order_number', $order_number)->firstOrFail();
+        return new \App\Mail\OrderNotification($order, 'Ini adalah simulasi email konfirmasi pesanan yang dikirimkan ke pelanggan.');
+    })->name('order.preview-email');
 });
-
-// Route khusus localhost untuk menandai sukses tanpa Webhook
-Route::get('/order/manual-success/{order_number}', [OrderController::class, 'manualSuccess'])->name('order.manual.success');
-
-// Route khusus untuk DEMO PRESENTASI: Melihat tampilan email di browser (tanpa perlu nge-cek log)
-Route::get('/preview-email/{order_number}', function ($order_number) {
-    $order = \App\Models\Order::where('order_number', $order_number)->firstOrFail();
-    return new \App\Mail\OrderNotification($order, 'Ini adalah simulasi email konfirmasi pesanan yang dikirimkan ke pelanggan.');
-})->name('order.preview-email');

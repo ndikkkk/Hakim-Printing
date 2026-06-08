@@ -10,7 +10,10 @@
 </head>
 <body>
 
-<nav class="navbar">
+<nav class="navbar" style="position: relative;">
+    <a href="{{ route('home') }}" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); text-decoration: none; color: #555; background: #fff; padding: 8px 15px; border-radius: 20px; font-weight: 500; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 5px;">
+        &larr; Kembali ke Beranda
+    </a>
     <img src="{{ asset('images/logo.png') }}" class="logo">
 
     <h2>Halaman Admin</h2>
@@ -31,12 +34,6 @@
 
 <div class="user-section">
     <div class="menu">
-
-        <div class="menu">
-        <a href="/" class="menu-item">
-            <img src="{{ asset('images/logo.png') }}">
-            <p>Ke Halaman Home</p>
-        </a>
 
         <a href="/admin/add-product" class="menu-item">
             <img src="{{ asset('images/add-catalog.png') }}">

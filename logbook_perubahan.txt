@@ -1,0 +1,33 @@
+LOGBOOK PERUBAHAN & PENGEMBANGAN WEBSITE HAKIM PRINTING
+
+Berikut adalah rincian seluruh pembaruan, perbaikan bug, dan penambahan fitur yang telah dilakukan pada sistem:
+
+1. PENINGKATAN UI/UX & ESTETIKA (FRONT-END)
+- Integrasi Pustaka Animasi (AOS): Menerapkan pustaka Animate On Scroll (AOS) ke seluruh elemen halaman utama (Beranda) untuk memberikan efek interaktif saat halaman digulir (fade-up, zoom-in, fade-right).
+- Pembaruan Tipografi: Mengganti font bawaan yang kaku dengan kombinasi font modern dan premium dari Google Fonts, yaitu Playfair Display (untuk heading) dan Montserrat (untuk teks paragraf).
+- Perbaikan Tata Letak Footer (Floating Footer Bug): Memperbaiki masalah footer yang menggantung di tengah layar pada halaman User dan halaman Admin dengan menerapkan Flexbox layout (min-height: 100vh dan margin-top: auto).
+- Penyatuan Skema Warna Latar Belakang: Menghapus area rumpang berwarna putih yang mengganggu di bagian tengah halaman dan menyelaraskannya dengan warna cream agar transisi visual antar sesi (section) menjadi mulus.
+- Efek Mengetik (Typewriter): Menambahkan animasi seolah diketik (typing effect) pada teks judul utama "Selamat Datang di Hakim Printing" di bagian Hero Section untuk menarik perhatian pengunjung.
+- Smart Sticky Glassmorphism Navbar: Memodifikasi menu navigasi atas (tab) agar tetap menempel saat di-scroll. Ditambahkan efek glassmorphism (kaca buram transparan agak gelap) dan transisi perubahan warna teks dari hitam menjadi putih secara halus (smooth transition).
+- Perbaikan Proporsi Tombol & Margin: Memperbaiki tombol "Lihat Koleksi Kami" yang memanjang secara tidak wajar (stretching) menjadi fit-content, serta menengahkan teks pahlawan (hero text) agar mengisi ruang kosong dengan proporsional.
+- Pembaruan Tombol "Tampilkan Lebih Banyak": Mengubah warna latar tombol menjadi cream solid dengan teks hitam. Menambahkan efek interaktif membesar saat di-hover, memudar (fade-out) saat diklik, dan menyinkronkannya dengan animasi kemunculan produk tambahan (AOS Refresh).
+- Penyesuaian Label Navigasi: Mengubah label menu "Dashboard" di halaman utama menjadi "Pesanan" agar lebih relevan dengan sudut pandang pengguna.
+
+2. PENYESUAIAN LOGIKA & ALUR PENGGUNA (BACK-END & ROUTING)
+- Perubahan Alur Redirect Pasca-Login: Memperbarui logika di AuthController.php. Kini, baik pengguna berstatus 'User' maupun 'Admin' akan otomatis diarahkan ke halaman Beranda (/) setelah berhasil login, tidak lagi dilempar langsung ke dashboard Admin.
+- Restrukturisasi Menu Admin: Menghapus tombol besar "Ke Halaman Home" dari bagian tengah dashboard admin (yang merusak estetika) dan memindahkannya ke bilah navigasi atas (Pojok Kiri Atas) dalam bentuk tombol "<- Kembali ke Beranda" yang ringkas dan konsisten.
+- Perbaikan Struktur HTML Dasbor Admin: Membersihkan penumpukan tag div yang tidak tertutup dengan benar pada admin-page.blade.php yang sebelumnya merusak struktur grid/flexbox dasbor.
+
+3. SISTEM PENDETEKSI GAMBAR KATALOG DINAMIS
+- Logika Fallback Gambar Produk: Mengubah kode pada home.blade.php dan detail-product.blade.php (AJAX Modal). Sistem kini tidak lagi mengandalkan gambar default dari database.
+- Pencocokan Nama File: Sistem diatur untuk mengekstrak product_code (misal: GS-001) dan mencari file fotonya secara otomatis di direktori public/images/ dengan mentoleransi berbagai format penulisan (huruf besar/kecil, dengan/tanpa strip, .jpg, atau .jpeg).
+- Sinkronisasi Katalog & Popup: Memastikan gambar yang dimuat secara dinamis ini berlaku sama pada grid katalog luar maupun pada jendela popup (modal AJAX) saat produk diklik.
+
+4. PENAMBALAN CELAH KEAMANAN (SECURITY PATCHES)
+- Pencegahan Eksploitasi Rute Manual (Bypass Pembayaran): Mengamankan rute shortcut /order/manual-success/{order_number} dengan membungkusnya ke dalam proteksi middleware(['auth', 'admin']). Hal ini menutup celah mutlak di mana pengguna biasa bisa menandai pesanan mereka menjadi lunas tanpa validasi Midtrans.
+- Pencegahan Insecure Direct Object Reference (IDOR): Membungkus rute /preview-email/{order_number} ke dalam proteksi admin. Mencegah pihak luar untuk mencoba-coba ID dan melihat data pribadi/pratinjau email milik pelanggan lain.
+- Penutupan Celah CSRF pada Modul Autentikasi: Mengubah rute /logout-user dan /logout-admin dari HTTP GET (Route::any) menjadi HTTP POST. Perubahan ini mencegah hacker mengeluarkan sesi pengguna secara paksa dari luar website (forced logout attacks).
+- Validasi Unggahan: Melakukan peninjauan pada AdminProductController.php dan mengonfirmasi bahwa unggahan file telah aman dari potensi unggahan skrip berbahaya (shell backdoor) karena dibatasi secara spesifik pada format image dengan maksimal ukuran 2MB.
+
+---
+Laporan ini di-generate secara otomatis merangkum riwayat pengembangan sistem.

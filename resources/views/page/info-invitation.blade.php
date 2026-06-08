@@ -12,9 +12,8 @@
 <body>
 
     {{-- HEADER --}}
-    <div class="navbar">
-        {{-- hapus sementara --}}
-        {{-- <img src="{{ asset('images/logo.png') }}"> --}}
+    <div class="navbar" style="position: relative;">
+        <a href="{{ route('home') }}" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); text-decoration: none; color: #555; background: #fff; padding: 8px 15px; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">← Kembali Beranda</a>
         <h2>Informasi Pesanan</h2>
     </div>
 

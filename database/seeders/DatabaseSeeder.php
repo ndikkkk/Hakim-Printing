@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
 {
     // Panggil ProductSeeder di sini
     $this->call([
+        AdminSeeder::class,
+        CustomerSeeder::class,
         ProductSeeder::class,
     ]);
 }

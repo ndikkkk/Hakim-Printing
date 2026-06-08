@@ -56,7 +56,32 @@
 
         {{-- IMAGE --}}
         <div class="detail-images">
-            <img src="{{ Str::startsWith($product->image, 'products/') ? asset('storage/' . $product->image) : asset('images/' . $product->image) }}" alt="{{ $product->name }}">
+            @php
+                $productCode = $product->product_code;
+                $cleanCodeUpper = str_replace('-', '', strtoupper($productCode)); // GS001
+                $cleanCodeLower = strtolower($productCode); // gs-001
+                
+                $imagePath = 'images/' . $product->image; // fallback to DB
+                
+                $possibleFiles = [
+                    $cleanCodeUpper . '.jpeg', $cleanCodeUpper . '.jpg', $cleanCodeUpper . '.png',
+                    strtolower($cleanCodeUpper) . '.jpeg', strtolower($cleanCodeUpper) . '.jpg',
+                    $cleanCodeLower . '.jpeg', $cleanCodeLower . '.jpg', $cleanCodeLower . '.png',
+                    strtoupper($productCode) . '.jpeg', strtoupper($productCode) . '.jpg'
+                ];
+                
+                foreach($possibleFiles as $file) {
+                    if(file_exists(public_path('images/' . $file))) {
+                        $imagePath = 'images/' . $file;
+                        break;
+                    }
+                }
+                
+                if (Str::startsWith($product->image, 'products/')) {
+                    $imagePath = 'storage/' . $product->image;
+                }
+            @endphp
+            <img src="{{ asset($imagePath) }}" alt="{{ $product->name }}">
         </div>
 
         {{-- DESKRIPSI --}}
