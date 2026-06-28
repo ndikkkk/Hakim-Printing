@@ -49,6 +49,9 @@ Route::middleware('auth')->prefix('order')->name('order.')->group(function () {
     Route::get('/processed', function () { return view('page.processed'); })->name('processed');
 
     Route::get('/get-cities/{province_id}', [OrderController::class, 'getCities'])->name('get.cities');
+
+    // Route manual-success untuk localhost (tanpa ngrok/webhook)
+    Route::get('/manual-success/{order_number}', [OrderController::class, 'manualSuccess'])->name('manual.success');
 });
 
 Route::post('/midtrans/callback', [OrderController::class, 'callback']);
@@ -130,8 +133,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         return view('admin.admin-history', compact('orders'));
     })->name('history');
     
-    // Route khusus localhost dipindah ke dalam grup admin agar aman
-    Route::get('/order/manual-success/{order_number}', [OrderController::class, 'manualSuccess'])->name('order.manual.success');
+    // Route manual-success sudah dipindah ke grup order agar bisa diakses user biasa setelah bayar
     
     // Route pratinjau email dipindah ke dalam grup admin agar aman (mencegah IDOR)
     Route::get('/preview-email/{order_number}', function ($order_number) {
